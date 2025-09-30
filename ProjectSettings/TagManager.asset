@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - terrenoatravesable
+  - Enemy
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Suelo
+  - Water
+  - UI
+  - Jugador
+  - Enemy
+  - Plataforms
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Fondo
+    uniqueID: 2155925323
+    locked: 0
+  - name: DetallesAT
+    uniqueID: 2943815641
+    locked: 0
+  - name: Plataformas
+    uniqueID: 466412799
+    locked: 0
+  - name: DetallesAD-AT
+    uniqueID: 2397896805
+    locked: 0
+  - name: Enemigo
+    uniqueID: 1786149629
+    locked: 0
+  - name: Jugador
+    uniqueID: 1046796643
+    locked: 0
+  - name: DetallesAD
+    uniqueID: 1436246397
+    locked: 0

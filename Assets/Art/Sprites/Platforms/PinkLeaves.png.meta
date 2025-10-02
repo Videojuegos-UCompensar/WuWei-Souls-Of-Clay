@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 0ed120746d819bf4fb14580f78a536d8
+guid: 76a006690a1032940856426118e3d63a
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,12 +97,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: plataforma atravesable_0
+      name: LevelDesignArte_Atlas_CFE_Hojas_0
       rect:
         serializedVersion: 2
-        x: 1008
-        y: 432
-        width: 48
+        x: 360
+        y: 816
+        width: 180
         height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -111,8 +111,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3f8fe40f54187374abbbc46c37fadee2
-      internalID: 920836579
+      spriteID: 5d2735bad11365340a3db036f4fb8380
+      internalID: -1921303037
       vertices: []
       indices: 
       edges: []
@@ -128,7 +128,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      plataforma atravesable_0: 920836579
+      LevelDesignArte_Atlas_CFE_Hojas_0: -1921303037
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

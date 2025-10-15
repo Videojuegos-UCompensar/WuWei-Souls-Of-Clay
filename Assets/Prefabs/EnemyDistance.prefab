@@ -13,9 +13,7 @@ GameObject:
   - component: {fileID: 5630160031618485135}
   - component: {fileID: 6023919712133188008}
   - component: {fileID: 4113873530271873587}
-  - component: {fileID: 3318664423170899502}
-  - component: {fileID: 6597712925829060127}
-  - component: {fileID: 4438514770730062130}
+  - component: {fileID: 3823517206717377293}
   m_Layer: 7
   m_Name: EnemyDistance
   m_TagString: Enemy
@@ -36,8 +34,7 @@ Transform:
   m_LocalScale: {x: -1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3776096292893259848}
-  - {fileID: 6519466933084091396}
+  - {fileID: 915123648341178738}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1200590100713171719
@@ -86,11 +83,11 @@ Rigidbody2D:
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 1
-  m_Mass: 0.81467986
-  m_LinearDrag: 0
+  m_UseAutoMass: 0
+  m_Mass: 100
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -175,7 +172,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3318664423170899502
+--- !u!114 &3823517206717377293
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -184,65 +181,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 908320665202643183}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 481c2fd08bbc53f43897369b3d38b1aa, type: 3}
+  m_Script: {fileID: 11500000, guid: 88a3e85dbc92fc04a957a4dcc077b285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fillTransform: {fileID: 4163412019359396594, guid: e9a331ea3eba6ba4dadd1bd082520f0b, type: 3}
-  fillRenderer: {fileID: 4373029776760085548, guid: e9a331ea3eba6ba4dadd1bd082520f0b, type: 3}
-  fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
-  lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  lowHealthThreshold: 0.3
---- !u!114 &6597712925829060127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 908320665202643183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 385ff0486b3cb3a48b94307740c05e50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 10
-  moveSpeed: 2
-  retreatDistance: 4
-  attackRange: 5
-  minDistance: 2.5
-  lowHealthThreshold: 5
-  lowHealthRetreatMultiplier: 1.5
-  jumpForce: 5
-  groundCheck: {fileID: 6519466933084091396}
+  walkSpeed: 5
+  jumpForce: 20
+  horizontalJumpForce: 8
+  groundCheckDistance: 1
+  minDetectionRange: 3
+  maxDetectionRange: 6
   groundLayer:
     serializedVersion: 2
-    m_Bits: 264
-  groundCheckRadius: 0.2
-  projectilePrefab: {fileID: 2110250488190885909, guid: abf24a9ce4f7b1b4da9bca4d5c8d34d3, type: 3}
-  firePoint: {fileID: 3776096292893259848}
-  projectileSpeed: 5
-  projectileDamage: 2
-  attackCooldown: 3
-  attackAnimationTime: 0.5
-  healthBarPrefab: {fileID: 3803695071122325125, guid: e9a331ea3eba6ba4dadd1bd082520f0b, type: 3}
-  healthBarOffset: {x: 0, y: 1, z: 0}
-  lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
---- !u!114 &4438514770730062130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 908320665202643183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87614274523f8794bbafddf514d60326, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 128
---- !u!1 &5859624107610672521
+    m_Bits: 8
+  groundCheck: {fileID: 915123648341178738}
+  player: {fileID: 0}
+  movementSmoothing: 5
+--- !u!1 &2283892739772129861
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -250,55 +204,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6519466933084091396}
-  m_Layer: 7
-  m_Name: check
+  - component: {fileID: 915123648341178738}
+  m_Layer: 3
+  m_Name: groundCheck
   m_TagString: Untagged
-  m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6519466933084091396
+--- !u!4 &915123648341178738
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5859624107610672521}
+  m_GameObject: {fileID: 2283892739772129861}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.093, y: -0.602, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7591328396594935716}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7495224131994661043
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3776096292893259848}
-  m_Layer: 7
-  m_Name: Fire Point
-  m_TagString: Untagged
-  m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3776096292893259848
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7495224131994661043}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.165, y: -0.117, z: 0}
+  m_LocalPosition: {x: 0.23, y: -0.66, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

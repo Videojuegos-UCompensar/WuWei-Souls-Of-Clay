@@ -22,7 +22,7 @@ public class PlayerHealth : MonoBehaviour, IRestartable
     [Header("Efectos de Muerte")]
     public GameObject deathEffectPrefab; // Prefab con efecto visual (opcional)
     public AudioClip deathSound; // Sonido al morir (opcional)
-    [SerializeField] private SimpleHealthBar simpleHealthBar; // Barra de salud alternativa
+    // [SerializeField] private SimpleHealthBar simpleHealthBar; // Barra de salud alternativa
     public AudioClip hitSound; // Sonido al recibir daño (opcional)
     
     private SpriteRenderer spriteRenderer;
@@ -77,12 +77,13 @@ public class PlayerHealth : MonoBehaviour, IRestartable
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        
-        // Si no hay SimpleHealthBar asignada, intenta encontrarla
-        if (simpleHealthBar == null)
+
+        //* Si no hay SimpleHealthBar asignada, intenta encontrarla
+        // if (simpleHealthBar == null)
         {
-            simpleHealthBar = GetComponentInChildren<SimpleHealthBar>();
+        //   simpleHealthBar = GetComponentInChildren<SimpleHealthBar>();
         }
+        
     }
     
     public void TakeDamage(int damage)
@@ -180,9 +181,9 @@ public class PlayerHealth : MonoBehaviour, IRestartable
         }
         
         // Actualizar SimpleHealthBar si existe
-        if (simpleHealthBar != null)
+        // if (simpleHealthBar != null)
         {
-            simpleHealthBar.UpdateHealthBar((float)currentHealth, maxHealth);
+        //    simpleHealthBar.UpdateHealthBar((float)currentHealth, maxHealth);
         }
     }
     

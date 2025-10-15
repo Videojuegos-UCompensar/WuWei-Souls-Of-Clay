@@ -135,10 +135,10 @@ public class PlayerCombat : MonoBehaviour
                 ApplyKnockback(enemy.transform);
             }
             
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            if (enemyController != null)
+            // EnemyController enemyController = enemy.GetComponent<EnemyController>();
+            // if (enemyController != null)
             {
-                enemyController.TakeDamage(attackDamage);
+            //    enemyController.TakeDamage(attackDamage);
                 ApplyKnockback(enemy.transform);
             }
             

@@ -1,176 +1,286 @@
 using UnityEngine;
-using System.Collections;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer), typeof(Animator))]
+[RequireComponent(typeof(MovementComponent))]
+[RequireComponent(typeof(RangedAttackComponent))]
+[RequireComponent(typeof(HealthComponent))]
 public class SlugEnemy : MonoBehaviour
 {
-    [Header("Movimiento y salto")]
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float jumpForce = 20f; 
-    [SerializeField] private float horizontalJumpForce = 8f; 
-    [SerializeField] private float groundCheckDistance = 1f;
+    private MovementComponent movement;
+    private RangedAttackComponent rangedAttack;
+    private HealthComponent health;
+    private Transform player;
 
-    [Header("Detección del jugador")]
-    [SerializeField] private float minDetectionRange = 3f; 
-    [SerializeField] private float maxDetectionRange = 6f; 
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private Transform player;
-
-    [Header("Suavizado de Movimiento")]
-    [SerializeField] private float movementSmoothing = 5f; 
-
-    private Rigidbody2D rb;
-    private SpriteRenderer sr;
     private Animator anim;
 
-    private bool isGrounded = false;
-    private bool isJumping = false;
+    [Header("Rangos de comportamiento")]
+    [SerializeField] private float detectionRange = 10f;
+    [SerializeField] private float escapeRange = 3f;
+    [SerializeField] private float shootRange = 7f;
+    [SerializeField] private float behaviorHysteresis = 0.4f; // evita oscilaciones entre estados
     
-    private float moveDir = 1f; 
-    private float targetMoveDir = 0f; 
-    private float currentMoveDir = 0f; 
+
+
+
+    // Nota: la detección de suelo ahora la realiza el MovementComponent.
+    // Evitamos duplicar raycasts guardando la lógica en MovementComponent (SRP/POO).
+
+    private enum EnemyState { Idle, Chasing, Fleeing, Shooting }
+    private EnemyState currentState = EnemyState.Idle;
+
+    private bool isAttacking = false;
+    private Coroutine attackRoutine = null;
+    [Header("Ataque")]
+    [SerializeField] private float attackAnimDelay = 0.15f; // tiempo desde trigger hasta ejecutar TryAttack (ajusta según anim)
+    [SerializeField] private bool useAnimationEventForFire = true; // si true, la animación debe llamar FireProjectile() y allí se ejecuta TryAttack()
+    private bool attackExecutedByEvent = false;
+    [SerializeField] private string attackStateName = "Attack"; // nombre del estado de animación de ataque
+    [SerializeField] private bool debugAttack = false;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
+        movement = GetComponent<MovementComponent>();
+        rangedAttack = GetComponent<RangedAttackComponent>();
+        health = GetComponent<HealthComponent>();
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
         anim = GetComponent<Animator>();
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        if (player == null)
-            player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        if (player != null && rangedAttack != null)
+            rangedAttack.SetTarget(player);
     }
 
     private void Update()
     {
         if (player == null) return;
 
-        CheckGrounded();
-        HandleMovement();
-    }
+        float dist = Vector2.Distance(transform.position, player.position);
+        bool inShootRange = dist <= shootRange;
 
-    private void CheckGrounded()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
-        isGrounded = hit.collider != null;
-
-        // Si ya no está saltando y está en el suelo, isJumping es falso.
-        if (isGrounded && isJumping)
-            isJumping = false;
-    }
-
-    private void HandleMovement()
-    {
-        // Si estamos saltando, el sprite se mantiene fijo y la lógica de movimiento se detiene.
-        if (isJumping) return; 
-
-        float distance = Vector2.Distance(transform.position, player.position);
-        bool playerOnRight = player.position.x > transform.position.x;
-        
-        // 1. Determinar la Dirección Objetivo (targetMoveDir)
-        if (distance <= maxDetectionRange && distance > minDetectionRange)
+        // Iniciar o detener rutina de ataque según estado deseado
+        if (currentState == EnemyState.Shooting && attackRoutine == null)
         {
-            targetMoveDir = playerOnRight ? 0.5f : -0.5f;
-            anim.SetBool("IsScared", false);
+            attackRoutine = StartCoroutine(AttackRoutine());
         }
-        else if (distance <= minDetectionRange)
+        else if (currentState != EnemyState.Shooting && attackRoutine != null)
         {
-            targetMoveDir = playerOnRight ? -1f : 1f;
-            anim.SetBool("IsScared", true);
+            StopCoroutine(attackRoutine);
+            attackRoutine = null;
+            isAttacking = false;
+        }
+
+        // Decide desired state with hysteresis to prevent rapid flipping
+        EnemyState desired = DetermineDesiredState(dist);
+
+        // If desired differs, switch; otherwise execute current state's behavior
+        currentState = desired;
+
+        switch (currentState)
+        {
+            case EnemyState.Fleeing:
+                HandleFlee();
+                break;
+            case EnemyState.Shooting:
+                HandleShoot();
+                break;
+            case EnemyState.Chasing:
+                HandleChase();
+                break;
+            default:
+                HandleIdle();
+                break;
+        }
+
+        // no hay flags previas ahora
+    }
+
+    private EnemyState DetermineDesiredState(float dist)
+    {
+        // Apply hysteresis: expand ranges slightly if we're inside them
+        float fleeThreshold = (currentState == EnemyState.Fleeing) ? escapeRange + behaviorHysteresis : escapeRange;
+        if (dist <= fleeThreshold) return EnemyState.Fleeing;
+
+        // Ahora: cualquier distancia hasta detectionRange provoca Shooting (a menos que estemos en flee)
+        float detectionThreshold = (currentState == EnemyState.Shooting) ? detectionRange + behaviorHysteresis : detectionRange;
+        if (dist <= detectionThreshold) return EnemyState.Shooting;
+
+        return EnemyState.Idle;
+    }
+
+    private void HandleIdle()
+    {
+        SetAnimBoolSafe("IsMoving", false);
+        SetAnimBoolSafe("IsScared", false);
+        movement?.Idle();
+    }
+
+    // Maneja el comportamiento de perseguir al jugador.
+    // El enemigo avanzará hacia el jugador solo si MovementComponent indica que hay suelo
+    // en la dirección de movimiento. Esto evita duplicar raycasts en este script.
+    private void HandleChase()
+    {
+        SetAnimBoolSafe("IsScared", false);
+
+        // Intentar moverse hacia el jugador. MovementComponent calcula la dirección y
+        // hace el flip del sprite. Después preguntamos si hay suelo delante.
+        movement?.MoveTowards(player.position);
+        if (movement != null && movement.IsGroundAhead())
+        {
+            SetAnimBoolSafe("IsMoving", true);
         }
         else
         {
-            targetMoveDir = 0f;
-            anim.SetBool("IsScared", false);
+            // No hay suelo delante: detenerse y evitar caer
+            movement?.Idle();
+            SetAnimBoolSafe("IsMoving", false);
         }
+    }
 
-        // 2. Suavizar la Dirección (Lerp)
-        currentMoveDir = Mathf.Lerp(currentMoveDir, targetMoveDir, Time.deltaTime * movementSmoothing);
-        moveDir = currentMoveDir; 
-
-        // 3. Aplicar Movimiento, Volteo y Animación
-        if (Mathf.Abs(moveDir) < 0.01f) 
+    // Maneja la lógica de huida: intenta alejarse del jugador si hay suelo atrás.
+    private void HandleFlee()
+    {
+        SetAnimBoolSafe("IsScared", true);
+        Vector2 awayDir = (transform.position - player.position).normalized;
+        if (movement != null && movement.IsGroundAheadInDirection(awayDir))
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
-            anim.SetBool("IsMoving", false);
+            movement?.MoveAwayFrom(player.position);
+            SetAnimBoolSafe("IsMoving", true);
         }
         else
         {
-            rb.velocity = new Vector2(moveDir * walkSpeed, rb.velocity.y);
-            // LÓGICA DE VOLTEO INVERTIDA EN TIERRA: Mira la dirección de movimiento.
-            sr.flipX = moveDir > 0; 
-            anim.SetBool("IsMoving", true);
+            // No hay suelo atrás: girar y quedarse en Idle para evitar caerse
+            movement?.FaceDirection(-Mathf.Sign(transform.localScale.x));
+            movement?.Idle();
+            SetAnimBoolSafe("IsMoving", false);
         }
+    }
 
-        // 4. Lógica de Salto
-        if (isGrounded)
+    private void HandleShoot()
+    {
+        SetAnimBoolSafe("IsScared", false);
+        // Disparar mientras se mueve: intentar avanzar hacia el jugador si hay suelo
+        movement?.MoveTowards(player.position);
+        if (movement != null && movement.IsGroundAhead())
         {
-            if (Mathf.Abs(moveDir) > 0.1f && IsNearEdge())
+            SetAnimBoolSafe("IsMoving", true);
+        }
+        else
+        {
+            movement?.Idle();
+            SetAnimBoolSafe("IsMoving", false);
+        }
+        // La lógica de disparo real corre en la coroutine AttackRoutine (iniciada/terminada por Update)
+    }
+
+    // Anim event: opcional, se puede usar para efectos (no necesario para disparo)
+    public void FireProjectile()
+    {
+        // si usamos Animation Event como sincronización, ejecuta TryAttack aquí
+        if (useAnimationEventForFire && rangedAttack != null)
+        {
+            if (rangedAttack.IsReadyToFire())
             {
-                // Dirección del salto (siempre hacia el jugador)
-                float directionTowardPlayer = playerOnRight ? 1f : -1f;
-                StartCoroutine(JumpTowardPlayer(directionTowardPlayer));
+                rangedAttack.TryAttack();
             }
+            attackExecutedByEvent = true;
+            return;
         }
+
+        // si quieres efectos VFX/Sound en el frame exacto, dispara aquí.
     }
 
-    private bool IsNearEdge()
+    private System.Collections.IEnumerator AttackRoutine()
     {
-        Vector2 origin = (Vector2)groundCheck.position + Vector2.right * moveDir * 0.5f;
-        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, groundLayer);
-        Debug.DrawRay(origin, Vector2.down * groundCheckDistance, hit.collider ? Color.green : Color.red);
-        return !hit.collider;
-    }
-
-    private IEnumerator JumpTowardPlayer(float directionTowardPlayer)
-    {
-        isJumping = true;
-
-        int playerLayer = LayerMask.NameToLayer("Player");
-        if (playerLayer >= 0)
-            Physics2D.IgnoreLayerCollision(gameObject.layer, playerLayer, true);
-
-        // Anular inercia horizontal para un arco limpio
-        rb.velocity = new Vector2(0f, rb.velocity.y); 
-
-        float horizontalSpeed = directionTowardPlayer * horizontalJumpForce;
-        
-        // Aplicamos el impulso inicial
-        rb.velocity = new Vector2(horizontalSpeed, jumpForce);
-
-        // LÓGICA DE VOLTEO INVERTIDA EN SALTO: Fija la orientación del sprite
-        sr.flipX = directionTowardPlayer > 0; 
-
-        yield return new WaitForSeconds(0.1f);
-
-        // ⭐ CORRECCIÓN CLAVE: Dejamos que la física de Unity controle la trayectoria.
-        while (!isGrounded)
+        isAttacking = true;
+        while (currentState == EnemyState.Shooting)
         {
-            // Solo mantenemos la velocidad horizontal constante y dejamos que rb.velocity.y sea gestionada por la gravedad.
-            rb.velocity = new Vector2(horizontalSpeed, rb.velocity.y); 
-            
+            if (rangedAttack != null && rangedAttack.IsReadyToFire())
+            {
+                // Reproducir animación
+                attackExecutedByEvent = false;
+                SetAnimTriggerSafe("Attack");
+
+                if (useAnimationEventForFire)
+                {
+                    // Esperar a que el Animator entre en el estado de ataque (para asegurar que la anim se reprodujo)
+                    float waitTime = 0f;
+                    float timeout = 1.5f; // seguridad: no esperar indefinidamente
+                    if (anim != null && !string.IsNullOrEmpty(attackStateName))
+                    {
+                        while (!anim.GetCurrentAnimatorStateInfo(0).IsName(attackStateName) && waitTime < timeout && currentState == EnemyState.Shooting)
+                        {
+                            waitTime += Time.deltaTime;
+                            yield return null;
+                        }
+                    }
+
+                    // Ahora esperar al Animation Event que ejecuta FireProjectile
+                    waitTime = 0f;
+                    while (!attackExecutedByEvent && waitTime < timeout && currentState == EnemyState.Shooting)
+                    {
+                        waitTime += Time.deltaTime;
+                        yield return null;
+                    }
+                    if (debugAttack) Debug.Log($"AttackRoutine: waited {waitTime:F2}s for animation event (animPresent={anim!=null})");
+                }
+                else
+                {
+                    // Esperar un pequeño delay para sincronizar trigger -> impacto
+                    yield return new WaitForSeconds(attackAnimDelay);
+                    // Ejecutar el ataque (TryAttack maneja cooldown)
+                    rangedAttack.TryAttack();
+                }
+            }
+
+            // Esperar un frame antes de comprobar otra vez (evita loop tight)
             yield return null;
-            anim.SetBool("IsJumping", !isGrounded);
         }
 
-        // isJumping se hará false en CheckGrounded() en el siguiente frame.
-        // No necesitamos voltear el sprite aquí; HandleMovement() se encarga.
-
-        if (playerLayer >= 0)
-            Physics2D.IgnoreLayerCollision(gameObject.layer, playerLayer, false);
+        isAttacking = false;
+        attackRoutine = null;
     }
+
+    private void ChangeState(EnemyState newState)
+    {
+        currentState = newState;
+    }
+
+    // Seguridad al setear parámetros del Animator (por si falta o el parámetro no existe)
+    private void SetAnimBoolSafe(string param, bool value)
+    {
+        if (anim == null) return;
+        try
+        {
+            anim.SetBool(param, value);
+        }
+        catch (System.ArgumentException)
+        {
+        }
+    }
+
+    private void SetAnimTriggerSafe(string param)
+    {
+        if (anim == null) return;
+        try
+        {
+            anim.SetTrigger(param);
+        }
+        catch (System.ArgumentException)
+        {
+        }
+    }
+
 
     private void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
-        
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(groundCheck.position, groundCheck.position + Vector3.down * groundCheckDistance);
+        Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, minDetectionRange);
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, maxDetectionRange);
+        Gizmos.DrawWireSphere(transform.position, escapeRange);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, shootRange);
+
+        // Si MovementComponent expone un groundCheck (no público), podemos dibujar una aproximación.
+        // Para evitar duplicación, omitimos los raycasts específicos aquí.
     }
 }

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &573811122415956278
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9068842981153645224}
+  m_Layer: 7
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9068842981153645224
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 573811122415956278}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.451, y: -0.117, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7591328396594935716}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &908320665202643183
 GameObject:
   m_ObjectHideFlags: 0
@@ -13,7 +44,10 @@ GameObject:
   - component: {fileID: 5630160031618485135}
   - component: {fileID: 6023919712133188008}
   - component: {fileID: 4113873530271873587}
-  - component: {fileID: 3823517206717377293}
+  - component: {fileID: 3723138782309096068}
+  - component: {fileID: 3060474932995094912}
+  - component: {fileID: 2613177317959215649}
+  - component: {fileID: 373310535233449707}
   m_Layer: 7
   m_Name: EnemyDistance
   m_TagString: Enemy
@@ -35,6 +69,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 915123648341178738}
+  - {fileID: 9068842981153645224}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &1200590100713171719
@@ -84,10 +119,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 100
+  m_Mass: 5
   m_LinearDrag: 2
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -172,7 +207,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3823517206717377293
+--- !u!114 &3723138782309096068
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,21 +216,73 @@ MonoBehaviour:
   m_GameObject: {fileID: 908320665202643183}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff728f9b17eeccc40bbe8f47397d54ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  groundCheck: {fileID: 0}
+  groundCheckDistance: 1
+  ledgeCheckDistance: 0.5
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!114 &3060474932995094912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908320665202643183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 992faddd13c0ca346b29162916d5905f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 10
+  attackCooldown: 1
+  projectilePrefab: {fileID: 2110250488190885909, guid: abf24a9ce4f7b1b4da9bca4d5c8d34d3, type: 3}
+  firePoint: {fileID: 9068842981153645224}
+  projectileSpeed: 10
+  fireRate: 1
+--- !u!114 &2613177317959215649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908320665202643183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e642820fb5a1da458fa2fb7433bc41e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onDamage:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &373310535233449707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908320665202643183}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88a3e85dbc92fc04a957a4dcc077b285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 5
-  jumpForce: 20
-  horizontalJumpForce: 8
-  groundCheckDistance: 1
-  minDetectionRange: 3
-  maxDetectionRange: 6
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  groundCheck: {fileID: 915123648341178738}
-  player: {fileID: 0}
-  movementSmoothing: 5
+  detectionRange: 10
+  escapeRange: 3
+  shootRange: 7
+  behaviorHysteresis: 0.4
+  attackAnimDelay: 0.15
+  useAnimationEventForFire: 1
+  attackStateName: Attack
+  debugAttack: 0
 --- !u!1 &2283892739772129861
 GameObject:
   m_ObjectHideFlags: 0
@@ -221,7 +308,7 @@ Transform:
   m_GameObject: {fileID: 2283892739772129861}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.23, y: -0.66, z: 0}
+  m_LocalPosition: {x: 0.316, y: -0.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

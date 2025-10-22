@@ -15,8 +15,6 @@ public class PlayerCombat : MonoBehaviour
     [Header("Effects")]
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private float knockbackForce = 3f;
-    [SerializeField] private float cameraShakeIntensity = 1.5f;
-    [SerializeField] private float cameraShakeDuration = 0.1f;
 
     [Header("Combo System")]
     [SerializeField] private int maxComboCount = 3;
@@ -113,86 +111,12 @@ public class PlayerCombat : MonoBehaviour
 
     private void PerformAttack()
     {
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-        
-        bool hitAny = false;
-        
-        foreach (Collider2D enemy in hitEnemies)
-        {
-            hitAny = true;
-            
-            // Activar la animación de daño en el enemigo
-            Animator enemyAnimator = enemy.GetComponent<Animator>();
-            if (enemyAnimator != null)
-            {
-                enemyAnimator.SetTrigger("Hit");
-            }
-            
-            EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-            if (enemyAI != null)
-            {
-                enemyAI.TakeDamage(attackDamage);
-                ApplyKnockback(enemy.transform);
-            }
-            
-            // EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            // if (enemyController != null)
-            {
-            //    enemyController.TakeDamage(attackDamage);
-                ApplyKnockback(enemy.transform);
-            }
-            
-            if (hitEffectPrefab != null)
-            {
-                Instantiate(hitEffectPrefab, enemy.transform.position, Quaternion.identity);
-            }
-        }
-        
-        if (hitAny)
-        {
-            StartCoroutine(CameraShake());
-            
-            if (hitSounds.Length > 0)
-            {
-                int soundIndex = Random.Range(0, hitSounds.Length);
-                audioSource.PlayOneShot(hitSounds[soundIndex]);
-            }
-        }
+      
     }
 
     private void ApplyKnockback(Transform enemyTransform)
     {
-        Vector2 knockbackDirection = (enemyTransform.position - transform.position).normalized;
-        Rigidbody2D enemyRb = enemyTransform.GetComponent<Rigidbody2D>();
-        if (enemyRb != null)
-        {
-            enemyRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-        }
-    }
-
-    private IEnumerator CameraShake()
-    {
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null) yield break;
         
-        Vector3 originalPosition = mainCamera.transform.position;
-        float elapsed = 0f;
-        
-        while (elapsed < cameraShakeDuration)
-        {
-            float xOffset = Random.Range(-1f, 1f) * cameraShakeIntensity * 0.1f;
-            float yOffset = Random.Range(-1f, 1f) * cameraShakeIntensity * 0.1f;
-            
-            mainCamera.transform.position = new Vector3(
-                originalPosition.x + xOffset,
-                originalPosition.y + yOffset,
-                originalPosition.z);
-            
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        
-        mainCamera.transform.position = originalPosition;
     }
 
     public void OnAttackEvent()

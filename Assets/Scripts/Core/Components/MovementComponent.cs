@@ -33,7 +33,6 @@ public class MovementComponent : MonoBehaviour
         rb.velocity = new Vector2(moveDirection.x * moveSpeed, rb.velocity.y);
         anim.SetBool("IsMoving", moveDirection != Vector2.zero);
 
-        Debug.Log($"Velocity: {rb.velocity}");
     }
 
     public void MoveTowards(Vector2 targetPosition)

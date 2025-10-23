@@ -47,7 +47,11 @@ public class RangedAttackComponent : AttackComponent
 
         // si el projectile tiene script Projectile, pasarle el daño
         projectile projectileScript = proj.GetComponent<projectile>();
-        if (projectileScript != null) projectileScript.SetDamage(damage);
+        if (projectileScript != null)
+        {
+            projectileScript.SetDamage(damage);
+            try { projectileScript.SetOwner(this.gameObject); } catch { }
+        }
         
 
         Debug.Log($"{gameObject.name} disparó un proyectil a {target.name}");

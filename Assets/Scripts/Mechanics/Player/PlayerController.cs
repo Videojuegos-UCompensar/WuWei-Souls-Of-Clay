@@ -94,7 +94,6 @@ private void Update()
         {
             rbd.velocity = new Vector2(direccion.x * velmove, rbd.velocity.y);
         }
-        
     }
 
     private void AjustarRotacion(float direccionX){

@@ -11,6 +11,7 @@ public class RangedAttackComponent : AttackComponent
     [SerializeField] private Transform firePoint;             // desde donde salen los proyectiles
     [SerializeField] private float projectileSpeed = 0.05f;
     [SerializeField] private float fireRate = 1f;             // disparos por segundo
+    [SerializeField] private ProjectileData projectileData;
 
     private float nextFireTime = -999f;
 
@@ -43,18 +44,28 @@ public class RangedAttackComponent : AttackComponent
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
         Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-        if (rb != null) rb.velocity = dir * projectileSpeed;
+        float sp = projectileSpeed;
+        if (projectileData != null && projectileData.speed > 0) sp = projectileData.speed;
+        if (rb != null) rb.velocity = dir * sp;
 
         // si el projectile tiene script Projectile, pasarle el daño
         projectile projectileScript = proj.GetComponent<projectile>();
         if (projectileScript != null)
         {
-            projectileScript.SetDamage(damage);
+            // pasar configuración de tipo (opcional)
+            try { projectileScript.SetConfig(projectileData); } catch { }
+
+            // calcular daño final: base del AttackComponent + base del projectileData
+            int finalDamage = damage;
+            if (projectileData != null) finalDamage += projectileData.baseDamage;
+            // finalDamage computed and passed to projectile
+            projectileScript.SetDamage(finalDamage);
+
             try { projectileScript.SetOwner(this.gameObject); } catch { }
         }
         
 
-        Debug.Log($"{gameObject.name} disparó un proyectil a {target.name}");
+    // fired
         return true;
     }
 

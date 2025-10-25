@@ -342,10 +342,11 @@ public class EnemyAI : MonoBehaviour
         Collider2D playerCollider = Physics2D.OverlapCircle(transform.position, attackRange, playerLayer);
         if (playerCollider != null)
         {
-            // Intentar aplicar daño al jugador
-            PlayerHealth playerHealth = playerCollider.GetComponent<PlayerHealth>();
+            // Intentar aplicar daño al jugador usando HealthComponent
+            HealthComponent playerHealth = playerCollider.GetComponent<HealthComponent>();
             if (playerHealth != null)
             {
+                try { Debug.Log($"[Enemy] {name} attacking {playerCollider.gameObject.name} damage={attackDamage}"); } catch { }
                 playerHealth.TakeDamage(attackDamage);
             }
         }

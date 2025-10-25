@@ -164,8 +164,8 @@ public class LevelManager : MonoBehaviour
             // Reactivar al jugador si estaba desactivado
             player.SetActive(true);
             
-            // Restaurar la salud del jugador
-            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            // Restaurar la salud del jugador (usar HealthComponent si existe)
+            HealthComponent playerHealth = player.GetComponent<HealthComponent>();
             if (playerHealth != null)
             {
                 playerHealth.RestoreFullHealth();

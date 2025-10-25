@@ -104,7 +104,7 @@ public class SlugEnemy : MonoBehaviour
     {
         if (health != null)
         {
-            health.takeDamage(amount);
+            health.TakeDamage(amount);
         }
         else
         {

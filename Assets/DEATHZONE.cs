@@ -39,7 +39,7 @@ public class DeathZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // Encontrar componente de salud
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            HealthComponent playerHealth = other.GetComponent<HealthComponent>();
             
             // Reproducir sonido si existe
             if (audioSource != null && deathSound != null)
@@ -58,7 +58,7 @@ public class DeathZone : MonoBehaviour
             {
                 if (instantKill)
                 {
-                    playerHealth.Die();
+                    playerHealth.SetHealth(0);
                 }
                 else
                 {
@@ -68,7 +68,7 @@ public class DeathZone : MonoBehaviour
             else
             {
                 // Si no tiene componente de salud, simplemente desactivar el objeto
-                Debug.LogWarning("El jugador no tiene componente PlayerHealth. Desactivando objeto.");
+                Debug.LogWarning("El jugador no tiene componente HealthComponent. Desactivando objeto.");
                 other.gameObject.SetActive(false);
             }
             

@@ -13,6 +13,10 @@ public abstract class AttackComponent : MonoBehaviour
     protected float lastAttackTime = -999f;                    // tiempo del último ataque
     protected Transform target;                                // objetivo (por ejemplo el player)
 
+    // Exponer el daño de forma segura para que otros objetos (por ejemplo proyectiles)
+    // puedan leer el valor si es necesario sin romper encapsulación.
+    public int Damage => damage;
+
     /// <summary> Asigna el objetivo (por ejemplo desde SlugEnemy). </summary>
     public void SetTarget(Transform newTarget)
     {

@@ -23905,7 +23905,7 @@ Transform:
   m_GameObject: {fileID: 962476569}
   serializedVersion: 2
   m_LocalRotation: {x: -0.70710695, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 25.4, y: 0.4, z: 2.7}
+  m_LocalPosition: {x: 25.4, y: 5.9, z: 2.7}
   m_LocalScale: {x: 22.470013, y: 3.9564397, z: 4.7568274}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25863,7 +25863,7 @@ Transform:
   m_GameObject: {fileID: 1049642226}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8, y: -0.5, z: 0}
+  m_LocalPosition: {x: -9.2, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26012,18 +26012,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2622c42da4bad646a77e823fb8c3926, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invincibilityTime: 2
-  flashOnDamage: 1
-  flashCount: 3
-  healthBar: {fileID: 0}
-  showDamageEffect: 1
-  deathEffectPrefab: {fileID: 0}
-  deathSound: {fileID: 0}
-  hitSound: {fileID: 0}
-  health: {fileID: 0}
-  spriteRenderer: {fileID: 0}
-  animator: {fileID: 0}
-  audioSource: {fileID: 0}
 --- !u!114 &1049642241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32515,7 +32503,7 @@ Transform:
   m_GameObject: {fileID: 1242126134}
   serializedVersion: 2
   m_LocalRotation: {x: -0.70710695, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 38.3, y: 2.9, z: 26.4}
+  m_LocalPosition: {x: 38.3, y: 11.1, z: 26.4}
   m_LocalScale: {x: 26.774607, y: 4.714377, z: 4.714377}
   m_ConstrainProportionsScale: 0
   m_Children: []

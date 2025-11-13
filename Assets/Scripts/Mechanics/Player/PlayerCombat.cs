@@ -80,6 +80,9 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!canAttack) return;
 
+        movimientoScript.sePuedeMover = false;
+        movimientoScript.rbd.velocity = Vector2.zero;
+
         currentCombo = (currentCombo % maxComboCount) + 1;
         lastAttackTime = Time.time;
 

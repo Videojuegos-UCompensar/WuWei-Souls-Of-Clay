@@ -47,6 +47,8 @@ private void OnEnable() {
     Controles.Enable();
     Controles.Base.Jump.started += _ => IniciarSalto();
     Controles.Base.Jump.canceled += _ => FinalizarSalto();
+    Controles.Base.Jump.started += _ => IniciarSalto();
+    Controles.Base.Jump.canceled += _ => FinalizarSalto();
     Controles.Base.Dash.performed += _ => RealizarDash();
 }
 
@@ -54,16 +56,14 @@ private void OnDisable() {
     Controles.Disable();
     Controles.Base.Jump.started -= _ => IniciarSalto();
     Controles.Base.Jump.canceled -= _ => FinalizarSalto();
+    Controles.Base.Jump.started -= _ => IniciarSalto();
+    Controles.Base.Jump.canceled -= _ => FinalizarSalto();
     Controles.Base.Dash.performed -= _ => RealizarDash();
 }
 
 private void Update()
 {
-    direccion = Controles.Base.Move.ReadValue<Vector2>();
-    AjustarRotacion(direccion.x);
     enSuelo = Physics2D.OverlapBox(controladorSuelo.position, dimecionesCaja, 0f, queEsSuelo);
-
-    animator.SetFloat("Vel", Mathf.Abs(direccion.x));
     animator.SetBool("enSuelo", enSuelo);
 
     // Verificar si el jugador sigue presionando el salto
@@ -87,10 +87,26 @@ private void Update()
     {
         manteniendoSalto = false;
     }
+
+    if (!sePuedeMover && !manteniendoSalto)
+    {
+        // Fuerza la animación de quieto mientras ataca o no puede moverse
+        animator.SetFloat("Vel", 0);
+        return;
+    }
+
+    direccion = Controles.Base.Move.ReadValue<Vector2>();
+    AjustarRotacion(direccion.x);
+    animator.SetFloat("Vel", Mathf.Abs(direccion.x));
 }
 
     private void FixedUpdate(){
-        if(sePuedeMover && !estaDasheando)
+        if(sePuedeMover && !estaDasheando )
+        {
+            rbd.velocity = new Vector2(direccion.x * velmove, rbd.velocity.y);
+        }
+
+        if(!sePuedeMover && manteniendoSalto )
         {
             rbd.velocity = new Vector2(direccion.x * velmove, rbd.velocity.y);
         }

@@ -81,6 +81,9 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!canAttack) return;
 
+        movimientoScript.sePuedeMover = false;
+        movimientoScript.rbd.velocity = Vector2.zero;
+
         currentCombo = (currentCombo % maxComboCount) + 1;
         lastAttackTime = Time.time;
         
@@ -90,7 +93,6 @@ public class PlayerCombat : MonoBehaviour
     private IEnumerator AttackSequence()
     {
         canAttack = false;
-        movimientoScript.sePuedeMover = false;
         
         // Activar la animación de ataque correspondiente
         animator.SetTrigger("Attack" + currentCombo);
@@ -105,10 +107,10 @@ public class PlayerCombat : MonoBehaviour
         
         PerformAttack();
         
-        yield return new WaitForSeconds(attackCooldown - 0.2f);
+        yield return new WaitForSeconds(attackCooldown);
         
-        movimientoScript.sePuedeMover = true;
         canAttack = true;
+        movimientoScript.sePuedeMover = true;
     }
 
     private void PerformAttack()

@@ -123,7 +123,7 @@ Rigidbody2D:
   m_LinearDrag: 2
   m_AngularDrag: 0.05
   m_GravityScale: 2
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 38f7d9a9ae5460d4eb2e253416f1736d, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -262,6 +262,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   onDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealed:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &373310535233449707

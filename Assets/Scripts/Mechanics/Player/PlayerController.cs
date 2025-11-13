@@ -17,11 +17,6 @@ public float saltoSostenido = 0.5f; // tiempo maximo que se puede sostener el sa
 public float fuerzaSaltoExtra = 5f; // fuerza adicional mientras mantienes presionado
 private bool manteniendoSalto;
 private float tiempoSalto = 0f;
-public float fuerzaSalto = 5f;
-public float saltoSostenido = 0.5f; // tiempo maximo que se puede sostener el salto
-public float fuerzaSaltoExtra = 5f; // fuerza adicional mientras mantienes presionado
-private bool manteniendoSalto;
-private float tiempoSalto = 0f;
 public LayerMask queEsSuelo;
 public Transform controladorSuelo;
 public Vector3 dimecionesCaja;
@@ -30,7 +25,6 @@ public bool sePuedeMover = true;
 [SerializeField]private Vector2 velocidadRebote;
 
 // Variables para el dash
-public float velocidadDash = 30f;
 public float velocidadDash = 30f;
 public float tiempoDash = 0.2f;
 public float tiempoEntreDashes = 1f;

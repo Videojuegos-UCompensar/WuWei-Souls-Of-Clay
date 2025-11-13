@@ -135,22 +135,26 @@ public class PlayerCombat : MonoBehaviour
             return;
         }
 
+        // Evitar aplicar daño múltiple a la misma entidad si tiene varios colliders
+        var damaged = new HashSet<GameObject>();
         foreach (var enemy in hitEnemies)
         {
             if (enemy == null) continue;
+            var root = enemy.transform.root.gameObject;
+            if (damaged.Contains(root)) continue;
+            damaged.Add(root);
 
-            if (debug) Debug.Log($"PlayerCombat: hit {enemy.name}");
+            if (debug) Debug.Log($"PlayerCombat: hit {enemy.name} (root={root.name})");
 
-            var hc = enemy.GetComponent<HealthComponent>();
+            var hc = root.GetComponent<HealthComponent>() ?? root.GetComponentInChildren<HealthComponent>(true);
             if (hc != null)
             {
-                // HealthComponent in this project exposes takeDamage
-                hc.takeDamage(attackDamage);
+                hc.TakeDamage(attackDamage);
             }
             else
             {
-                // Fallback: try reflection to call TakeDamage if present on another script
-                var behaviour = enemy.GetComponent<MonoBehaviour>();
+                // Fallback: try reflection on root's mono behaviours
+                var behaviour = root.GetComponent<MonoBehaviour>();
                 if (behaviour != null)
                 {
                     var method = behaviour.GetType().GetMethod("TakeDamage");
@@ -164,13 +168,13 @@ public class PlayerCombat : MonoBehaviour
 
             if (hitEffectPrefab != null)
             {
-                Instantiate(hitEffectPrefab, enemy.transform.position, Quaternion.identity);
+                Instantiate(hitEffectPrefab, root.transform.position, Quaternion.identity);
             }
 
-            Rigidbody2D rb = enemy.GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = root.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                Vector2 knockDir = (enemy.transform.position - transform.position).normalized;
+                Vector2 knockDir = (root.transform.position - transform.position).normalized;
                 rb.AddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
             }
         }

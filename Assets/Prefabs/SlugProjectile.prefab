@@ -187,4 +187,5 @@ MonoBehaviour:
   hitLayers:
     serializedVersion: 2
     m_Bits: 576
-  debugProjectile: 0
+  defaultConfig: {fileID: 11400000, guid: 05969c77c14a7d347a25ad46ef8811e4, type: 2}
+  debugProjectile: 1

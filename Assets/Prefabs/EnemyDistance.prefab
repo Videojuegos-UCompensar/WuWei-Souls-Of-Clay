@@ -244,6 +244,7 @@ MonoBehaviour:
   firePoint: {fileID: 9068842981153645224}
   projectileSpeed: 5
   fireRate: 1
+  projectileData: {fileID: 11400000, guid: 05969c77c14a7d347a25ad46ef8811e4, type: 2}
 --- !u!114 &2613177317959215649
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,6 +277,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   debugDamage: 1
+  hitTriggerName: Hit
+  hitStateName: Hit
   detectionRange: 10
   escapeRange: 3
   shootRange: 7

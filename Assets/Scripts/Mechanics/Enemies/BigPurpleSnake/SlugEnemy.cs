@@ -1,3 +1,4 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 
 [RequireComponent(typeof(MovementComponent))]
@@ -11,6 +12,10 @@ public class SlugEnemy : MonoBehaviour
     private Transform player;
 
     private Animator anim;
+    [SerializeField] private bool debugDamage = false;
+    [Header("Damage Animation")]
+    [SerializeField] private string hitTriggerName = "Hit";
+    [SerializeField] private string hitStateName = "Hit";
 
     [Header("Rangos de comportamiento")]
     [SerializeField] private float detectionRange = 10f;
@@ -46,6 +51,85 @@ public class SlugEnemy : MonoBehaviour
 
         if (player != null && rangedAttack != null)
             rangedAttack.SetTarget(player);
+
+        // Suscribirse al evento de daño para reproducir animación Hit
+        if (health != null)
+        {
+            try { health.onDamage.AddListener(OnDamaged); } catch { }
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (health != null) try { health.onDamage.RemoveListener(OnDamaged); } catch { }
+    }
+
+    private void OnDamaged()
+    {
+        if (debugDamage) Debug.Log($"SlugEnemy.OnDamaged called on {name} (anim present={anim!=null})");
+
+        if (anim != null && debugDamage)
+        {
+            try {
+                var state = anim.GetCurrentAnimatorStateInfo(0);
+                Debug.Log($"SlugEnemy animator state: {state.fullPathHash} nameHash={state.shortNameHash} normalizedTime={state.normalizedTime:F2}");
+            } catch { }
+        }
+        // Reproducir animación de golpe de forma segura (trigger)
+        SetAnimTriggerSafe(hitTriggerName);
+
+        // Fallback: forzar reproducción directa del estado Hit si la transición por trigger no ocurre
+        if (anim != null && !string.IsNullOrEmpty(hitStateName))
+        {
+            try
+            {
+                if (debugDamage) Debug.Log($"SlugEnemy: attempting fallback Play({hitStateName})");
+                anim.Play(hitStateName, 0, 0f);
+            }
+            catch { }
+        }
+
+        // Marcar como asustado brevemente (opcional)
+        SetAnimBoolSafe("IsScared", true);
+        try { StopCoroutine("TemporaryScared"); } catch { }
+        StartCoroutine(TemporaryScared(0.5f));
+
+        // Indicar que la animación Hit está en curso para bloquear transiciones como Scared
+        SetAnimBoolSafe("IsHitPlaying", true);
+        try { StopCoroutine("EndHit"); } catch { }
+        StartCoroutine(EndHit(0.5f));
+    }
+
+    public void TakeDamage(int amount)
+    {
+        if (health != null)
+        {
+            health.takeDamage(amount);
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: TakeDamage called but HealthComponent missing");
+        }
+        // reproducir feedback inmediatamente
+        OnDamaged();
+    }
+
+    private System.Collections.IEnumerator TemporaryScared(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        SetAnimBoolSafe("IsScared", false);
+    }
+
+    private System.Collections.IEnumerator EndHit(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        SetAnimBoolSafe("IsHitPlaying", false);
+    }
+
+    // Método público para Animation Event al final del clip Hit (más preciso que temporizador)
+    public void OnHitEnd()
+    {
+        SetAnimBoolSafe("IsHitPlaying", false);
     }
 
     private void Update()
@@ -237,6 +321,7 @@ public class SlugEnemy : MonoBehaviour
         isAttacking = false;
         attackRoutine = null;
     }
+
 
     private void ChangeState(EnemyState newState)
     {

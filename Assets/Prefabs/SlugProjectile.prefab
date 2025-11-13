@@ -186,4 +186,5 @@ MonoBehaviour:
   lifeTime: 5
   hitLayers:
     serializedVersion: 2
-    m_Bits: 584
+    m_Bits: 576
+  debugProjectile: 0

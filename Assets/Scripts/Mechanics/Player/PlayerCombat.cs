@@ -15,8 +15,6 @@ public class PlayerCombat : MonoBehaviour
     [Header("Effects")]
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private float knockbackForce = 3f;
-    [SerializeField] private float cameraShakeIntensity = 1.5f;
-    [SerializeField] private float cameraShakeDuration = 0.1f;
 
     [Header("Combo System")]
     [SerializeField] private int maxComboCount = 3;
@@ -34,18 +32,19 @@ public class PlayerCombat : MonoBehaviour
     private AudioSource audioSource;
     [SerializeField] private AudioClip[] attackSounds;
     [SerializeField] private AudioClip[] hitSounds;
+    [SerializeField] private bool debug = false;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         movimientoScript = GetComponent<Movimiento2D>();
         audioSource = GetComponent<AudioSource>();
-        
+
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
-        
+
         if (attackPoint == null)
         {
             GameObject newAttackPoint = new GameObject("AttackPoint");
@@ -53,7 +52,7 @@ public class PlayerCombat : MonoBehaviour
             newAttackPoint.transform.localPosition = new Vector3(1f, 0f, 0f);
             attackPoint = newAttackPoint.transform;
         }
-        
+
         controles = new Controles();
     }
 
@@ -65,8 +64,8 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnDisable()
     {
-        controles.Disable();
         controles.Base.Attack.performed -= ctx => TryAttack();
+        controles.Disable();
     }
 
     private void Update()
@@ -86,115 +85,100 @@ public class PlayerCombat : MonoBehaviour
 
         currentCombo = (currentCombo % maxComboCount) + 1;
         lastAttackTime = Time.time;
-        
+
         StartCoroutine(AttackSequence());
     }
 
     private IEnumerator AttackSequence()
     {
         canAttack = false;
-        
+        if (movimientoScript != null) movimientoScript.sePuedeMover = false;
+
         // Activar la animación de ataque correspondiente
-        animator.SetTrigger("Attack" + currentCombo);
-        
-        if (attackSounds.Length > 0)
+        if (animator != null) animator.SetTrigger("Attack" + currentCombo);
+
+        if (attackSounds != null && attackSounds.Length > 0 && audioSource != null)
         {
             int soundIndex = Random.Range(0, attackSounds.Length);
             audioSource.PlayOneShot(attackSounds[soundIndex]);
         }
-        
+
+        // Esperar el momento del golpe (ajusta según animación)
         yield return new WaitForSeconds(0.2f);
-        
+
         PerformAttack();
-        
-        yield return new WaitForSeconds(attackCooldown);
-        
+
+        yield return new WaitForSeconds(Mathf.Max(0, attackCooldown - 0.2f));
+
+        if (movimientoScript != null) movimientoScript.sePuedeMover = true;
         canAttack = true;
-        movimientoScript.sePuedeMover = true;
     }
 
     private void PerformAttack()
     {
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-        
-        bool hitAny = false;
-        
-        foreach (Collider2D enemy in hitEnemies)
+        if (attackPoint == null)
         {
-            hitAny = true;
-            
-            // Activar la animación de daño en el enemigo
-            Animator enemyAnimator = enemy.GetComponent<Animator>();
-            if (enemyAnimator != null)
+            Debug.LogWarning("PlayerCombat: attackPoint is null, cannot perform attack");
+            return;
+        }
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+        if (hitEnemies == null || hitEnemies.Length == 0)
+        {
+            if (hitSounds != null && hitSounds.Length > 0 && audioSource != null)
             {
-                enemyAnimator.SetTrigger("Hit");
+                int s = Random.Range(0, hitSounds.Length);
+                audioSource.PlayOneShot(hitSounds[s]);
             }
-            
-            EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-            if (enemyAI != null)
+            if (debug) Debug.Log("PlayerCombat: no enemies hit");
+            return;
+        }
+
+        foreach (var enemy in hitEnemies)
+        {
+            if (enemy == null) continue;
+
+            if (debug) Debug.Log($"PlayerCombat: hit {enemy.name}");
+
+            var hc = enemy.GetComponent<HealthComponent>();
+            if (hc != null)
             {
-                enemyAI.TakeDamage(attackDamage);
-                ApplyKnockback(enemy.transform);
+                // HealthComponent in this project exposes takeDamage
+                hc.takeDamage(attackDamage);
             }
-            
-            // EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            // if (enemyController != null)
+            else
             {
-            //    enemyController.TakeDamage(attackDamage);
-                ApplyKnockback(enemy.transform);
+                // Fallback: try reflection to call TakeDamage if present on another script
+                var behaviour = enemy.GetComponent<MonoBehaviour>();
+                if (behaviour != null)
+                {
+                    var method = behaviour.GetType().GetMethod("TakeDamage");
+                    if (method != null)
+                    {
+                        try { method.Invoke(behaviour, new object[] { attackDamage }); }
+                        catch { }
+                    }
+                }
             }
-            
+
             if (hitEffectPrefab != null)
             {
                 Instantiate(hitEffectPrefab, enemy.transform.position, Quaternion.identity);
             }
-        }
-        
-        if (hitAny)
-        {
-            StartCoroutine(CameraShake());
-            
-            if (hitSounds.Length > 0)
+
+            Rigidbody2D rb = enemy.GetComponent<Rigidbody2D>();
+            if (rb != null)
             {
-                int soundIndex = Random.Range(0, hitSounds.Length);
-                audioSource.PlayOneShot(hitSounds[soundIndex]);
+                Vector2 knockDir = (enemy.transform.position - transform.position).normalized;
+                rb.AddForce(knockDir * knockbackForce, ForceMode2D.Impulse);
             }
         }
     }
 
     private void ApplyKnockback(Transform enemyTransform)
     {
-        Vector2 knockbackDirection = (enemyTransform.position - transform.position).normalized;
-        Rigidbody2D enemyRb = enemyTransform.GetComponent<Rigidbody2D>();
-        if (enemyRb != null)
-        {
-            enemyRb.AddForce(knockbackDirection * knockbackForce, ForceMode2D.Impulse);
-        }
-    }
-
-    private IEnumerator CameraShake()
-    {
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null) yield break;
-        
-        Vector3 originalPosition = mainCamera.transform.position;
-        float elapsed = 0f;
-        
-        while (elapsed < cameraShakeDuration)
-        {
-            float xOffset = Random.Range(-1f, 1f) * cameraShakeIntensity * 0.1f;
-            float yOffset = Random.Range(-1f, 1f) * cameraShakeIntensity * 0.1f;
-            
-            mainCamera.transform.position = new Vector3(
-                originalPosition.x + xOffset,
-                originalPosition.y + yOffset,
-                originalPosition.z);
-            
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        
-        mainCamera.transform.position = originalPosition;
+        // Placeholder in case you want a custom knockback behavior per enemy
     }
 
     public void OnAttackEvent()

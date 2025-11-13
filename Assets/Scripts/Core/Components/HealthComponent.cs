@@ -11,7 +11,6 @@ public class HealthComponent : MonoBehaviour
 
     void Update()
     {
-        Debug.Log($"Current Health: {currentHealth}");
     }
     // el onDeath Es para usar los eventos de muerte en caso de un boss una animacion de muerte especifica o coass asi, tambien podriamos
     // reproducir algun sonido especifico al momento de morir.

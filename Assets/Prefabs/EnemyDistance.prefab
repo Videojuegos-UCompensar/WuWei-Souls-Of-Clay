@@ -220,12 +220,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  groundCheck: {fileID: 0}
+  groundCheck: {fileID: 915123648341178738}
   groundCheckDistance: 1
   ledgeCheckDistance: 0.5
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
 --- !u!114 &3060474932995094912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,10 +239,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  attackCooldown: 1
+  attackCooldown: 0.5
   projectilePrefab: {fileID: 2110250488190885909, guid: abf24a9ce4f7b1b4da9bca4d5c8d34d3, type: 3}
   firePoint: {fileID: 9068842981153645224}
-  projectileSpeed: 10
+  projectileSpeed: 5
   fireRate: 1
 --- !u!114 &2613177317959215649
 MonoBehaviour:
@@ -270,11 +270,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 908320665202643183}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 88a3e85dbc92fc04a957a4dcc077b285, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugDamage: 1
   detectionRange: 10
   escapeRange: 3
   shootRange: 7

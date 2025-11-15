@@ -127,8 +127,6 @@ public class EnemyAI : MonoBehaviour
                 break;
         }
         
-        // Actualizar animaciones
-        UpdateAnimations();
 
         // Actualizar posición de la barra de vida
         if (healthBar != null)
@@ -462,6 +460,7 @@ public class EnemyAI : MonoBehaviour
         // Activar animación de muerte si existe
         if (animator != null)
         {
+            Debug.Log($"[Enemy] {name} died.");
             animator.SetTrigger("Die");
         }
         
@@ -487,22 +486,6 @@ public class EnemyAI : MonoBehaviour
         gameObject.SetActive(false);
     }
     
-    void UpdateAnimations()
-    {
-        if (animator != null)
-        {
-            // Actualizar parámetros del animator
-            animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
-            animator.SetBool("IsGrounded", isGrounded);
-            
-            // Estados adicionales
-            animator.SetBool("IsChasing", currentState == State.Chasing);
-            animator.SetBool("IsFleeing", currentState == State.Fleeing);
-            
-            // Parámetro de vida baja
-            animator.SetBool("LowHealth", currentHealth <= maxHealth * (lowHealthThreshold / 100));
-        }
-    }
     
     // Para visualizar el rango de detección y ataque en el editor
     void OnDrawGizmosSelected()

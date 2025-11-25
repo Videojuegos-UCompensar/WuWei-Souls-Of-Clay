@@ -23485,7 +23485,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3760796811535706586, guid: da8b509b2a0fbd04590aada9d783b10b, type: 3}
       propertyPath: m_TagString
-      value: Enemy
+      value: terrenoatravesable
       objectReference: {fileID: 0}
     - target: {fileID: 3977454126394509729, guid: da8b509b2a0fbd04590aada9d783b10b, type: 3}
       propertyPath: m_LocalScale.x
@@ -26269,10 +26269,9 @@ GameObject:
   - component: {fileID: 1049642231}
   - component: {fileID: 1049642235}
   - component: {fileID: 1049642236}
-  - component: {fileID: 1049642238}
   - component: {fileID: 1049642239}
   - component: {fileID: 1049642241}
-  - component: {fileID: 1049642240}
+  - component: {fileID: 1049642242}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -26479,7 +26478,7 @@ MonoBehaviour:
   rbd: {fileID: 1049642227}
   velmove: 4
   mirandoDrecha: 1
-  fuerzaSalto: 10
+  fuerzaSalto: 10.2
   saltoSostenido: 1
   fuerzaSaltoExtra: 5
   queEsSuelo:
@@ -26494,26 +26493,6 @@ MonoBehaviour:
   tiempoDash: 0.2
   tiempoEntreDashes: 1
   animator: {fileID: 1049642231}
---- !u!114 &1049642238
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1049642226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaa8e3c081f9d084c8ef11e6bca723d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  storePosition: 1
-  storeRotation: 1
-  storeScale: 0
-  storeVelocity: 1
-  storeActive: 1
-  preserveRigidbody: 1
-  preserveColliders: 1
-  preserveScripts: 1
 --- !u!114 &1049642239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26540,18 +26519,6 @@ MonoBehaviour:
   attackSounds: []
   hitSounds: []
   debug: 0
---- !u!114 &1049642240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1049642226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2622c42da4bad646a77e823fb8c3926, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1049642241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26577,6 +26544,26 @@ MonoBehaviour:
   OnHealed:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1049642242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1049642226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eef0cf23a705e745b4a06d01ce7f062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storePosition: 1
+  storeRotation: 1
+  storeScale: 0
+  storeVelocity: 1
+  storeActive: 1
+  preserveRigidbody: 1
+  preserveColliders: 1
+  preserveScripts: 1
 --- !u!1001 &1050093798
 PrefabInstance:
   m_ObjectHideFlags: 0

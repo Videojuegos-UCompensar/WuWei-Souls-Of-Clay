@@ -134,6 +134,6 @@ public class HealthComponent : MonoBehaviour
     private void Die()
     {
         onDeath?.Invoke(); // Dispara evento de muerte
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }

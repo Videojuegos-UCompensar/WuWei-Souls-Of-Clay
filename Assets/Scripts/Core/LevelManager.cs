@@ -189,7 +189,10 @@ public class LevelManager : MonoBehaviour
             MonoBehaviour[] playerScripts = player.GetComponents<MonoBehaviour>();
             foreach (MonoBehaviour script in playerScripts)
             {
-                script.enabled = true;
+              if (script == null || script.gameObject == null)
+                continue;  // ← evita el error
+
+              script.enabled = true;
             }
         }
         

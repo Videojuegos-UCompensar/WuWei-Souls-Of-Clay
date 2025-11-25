@@ -26478,11 +26478,7 @@ MonoBehaviour:
   rbd: {fileID: 1049642227}
   velmove: 4
   mirandoDrecha: 1
-<<<<<<< HEAD
   fuerzaSalto: 10.2
-=======
-  fuerzaSalto: 15
->>>>>>> develop
   saltoSostenido: 1
   fuerzaSaltoExtra: 5
   queEsSuelo:

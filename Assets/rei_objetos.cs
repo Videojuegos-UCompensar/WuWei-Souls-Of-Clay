@@ -17,20 +17,20 @@ public class RestartableObject : MonoBehaviour, IRestartable
     public bool preserveScripts = true;   // Mantener los scripts activos
     
     // Variables para almacenar el estado inicial
-    private Vector3 initialPosition;
-    private Quaternion initialRotation;
-    private Vector3 initialScale;
-    private Vector2 initialVelocity;
-    private bool initiallyActive;
-    private Dictionary<Component, bool> initialComponentStates;
-    private Dictionary<Rigidbody2D, RigidbodyState> initialRigidbodyStates;
+    protected Vector3 initialPosition;
+    protected Quaternion initialRotation;
+    protected Vector3 initialScale;
+    protected Vector2 initialVelocity;
+    protected bool initiallyActive;
+    protected Dictionary<Component, bool> initialComponentStates;
+    protected Dictionary<Rigidbody2D, RigidbodyState> initialRigidbodyStates;
     
     // Componentes que podrían necesitar reiniciarse
-    private Rigidbody2D rb;
-    private Collider2D[] colliders;
-    private MonoBehaviour[] scripts;
+    protected Rigidbody2D rb;
+    protected Collider2D[] colliders;
+    protected MonoBehaviour[] scripts;
     
-    private struct RigidbodyState
+    protected struct RigidbodyState
     {
         public bool simulated;
         public float gravityScale;
@@ -104,14 +104,14 @@ public class RestartableObject : MonoBehaviour, IRestartable
         // Guardar estado de los scripts
         foreach (var script in scripts)
         {
-            if (script != this) // No guardar el estado de este script
-            {
-                initialComponentStates[script] = script.enabled;
-            }
+          if (script == null || script == this)
+          continue;
+
+          initialComponentStates[script] = script.enabled;
         }
     }
     
-    public void OnLevelRestart()
+    public virtual void OnLevelRestart()
     {
         // Activar el objeto primero
         gameObject.SetActive(true);
@@ -136,12 +136,17 @@ public class RestartableObject : MonoBehaviour, IRestartable
         if (preserveColliders)
         {
             foreach (var collider in colliders)
+          {
+        if (collider == null)
+        continue;
+
+            if (initialComponentStates.TryGetValue(collider, out bool wasEnabled))
             {
-                if (initialComponentStates.TryGetValue(collider, out bool wasEnabled))
-                {
-                    collider.enabled = wasEnabled;
-                }
+            // Evitar error si el collider está destruido o no puede restaurarse
+            if (collider != null)
+             collider.enabled = wasEnabled;
             }
+          }
         }
         
         // Restaurar scripts
@@ -149,6 +154,11 @@ public class RestartableObject : MonoBehaviour, IRestartable
         {
             foreach (var script in scripts)
             {
+              if (script == null)
+                {
+                Debug.LogWarning($"{name}: Se encontró un script destruido durante el reinicio, se omite.");
+                continue;
+                }
                 if (script != this && initialComponentStates.TryGetValue(script, out bool wasEnabled))
                 {
                     script.enabled = wasEnabled;

@@ -44,10 +44,10 @@ public class RestartableObject : MonoBehaviour, IRestartable
         initialComponentStates = new Dictionary<Component, bool>();
         initialRigidbodyStates = new Dictionary<Rigidbody2D, RigidbodyState>();
         
-        // Obtener referencias a los componentes
+        // Obtener referencias a los componentes (defensivo: nunca dejar arrays nulos)
         rb = GetComponent<Rigidbody2D>();
-        colliders = GetComponents<Collider2D>();
-        scripts = GetComponents<MonoBehaviour>();
+        colliders = GetComponents<Collider2D>() ?? new Collider2D[0];
+        scripts = GetComponents<MonoBehaviour>() ?? new MonoBehaviour[0];
         
         // Guardar estado inicial de los componentes
         StoreInitialComponentStates();
@@ -83,6 +83,12 @@ public class RestartableObject : MonoBehaviour, IRestartable
     
     private void StoreInitialComponentStates()
     {
+        // Defensive guards
+        if (initialComponentStates == null)
+            initialComponentStates = new Dictionary<Component, bool>();
+        if (initialRigidbodyStates == null)
+            initialRigidbodyStates = new Dictionary<Rigidbody2D, RigidbodyState>();
+        
         // Guardar estado del Rigidbody2D
         if (rb != null)
         {
@@ -95,19 +101,26 @@ public class RestartableObject : MonoBehaviour, IRestartable
             };
         }
         
-        // Guardar estado de los colliders
-        foreach (var collider in colliders)
+        // Guardar estado de los colliders (skip null entries)
+        if (colliders != null)
         {
-            initialComponentStates[collider] = collider.enabled;
+            foreach (var collider in colliders)
+            {
+                if (collider == null) continue;
+                initialComponentStates[collider] = collider.enabled;
+            }
         }
         
-        // Guardar estado de los scripts
-        foreach (var script in scripts)
+        // Guardar estado de los scripts (skip null entries and self)
+        if (scripts != null)
         {
-          if (script == null || script == this)
-          continue;
+            foreach (var script in scripts)
+            {
+                if (script == null || script == this) 
+                    continue;
 
-          initialComponentStates[script] = script.enabled;
+                initialComponentStates[script] = script.enabled;
+            }
         }
     }
     
@@ -133,33 +146,31 @@ public class RestartableObject : MonoBehaviour, IRestartable
             transform.localScale = initialScale;
         
         // Restaurar colliders
-        if (preserveColliders)
+        if (preserveColliders && colliders != null)
         {
             foreach (var collider in colliders)
-          {
-        if (collider == null)
-        continue;
-
-            if (initialComponentStates.TryGetValue(collider, out bool wasEnabled))
             {
-            // Evitar error si el collider está destruido o no puede restaurarse
-            if (collider != null)
-             collider.enabled = wasEnabled;
+                if (collider == null) 
+                    continue;
+
+                if (initialComponentStates != null && initialComponentStates.TryGetValue(collider, out bool wasEnabled))
+                {
+                    collider.enabled = wasEnabled;
+                }
             }
-          }
         }
         
         // Restaurar scripts
-        if (preserveScripts)
+        if (preserveScripts && scripts != null)
         {
             foreach (var script in scripts)
             {
-              if (script == null)
+                if (script == null)
                 {
-                Debug.LogWarning($"{name}: Se encontró un script destruido durante el reinicio, se omite.");
-                continue;
+                    Debug.LogWarning($"{name}: Se encontró un script destruido durante el reinicio, se omite.");
+                    continue;
                 }
-                if (script != this && initialComponentStates.TryGetValue(script, out bool wasEnabled))
+                if (script != this && initialComponentStates != null && initialComponentStates.TryGetValue(script, out bool wasEnabled))
                 {
                     script.enabled = wasEnabled;
                 }
@@ -185,6 +196,9 @@ public class RestartableObject : MonoBehaviour, IRestartable
     
     private void RestoreRigidbodyState()
     {
+        if (rb == null) return;
+        if (initialRigidbodyStates == null) return;
+
         if (initialRigidbodyStates.TryGetValue(rb, out RigidbodyState state))
         {
             rb.simulated = state.simulated;

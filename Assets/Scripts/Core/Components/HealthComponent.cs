@@ -1,6 +1,7 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections;
 
 public class HealthComponent : MonoBehaviour
 	, IRestartable
@@ -10,7 +11,7 @@ public class HealthComponent : MonoBehaviour
     private int currentHealth;
 
     [Header("Eventos")]
-    public UnityEvent onDeath;
+    public Action onDeath;
     public UnityEvent onDamage; // legacy no-param event
     // New typed events useful for UI / listeners that need the amount
     public UnityEvent<int> OnDamaged;
@@ -18,6 +19,8 @@ public class HealthComponent : MonoBehaviour
     // If your project already provides a CameraShake component on the main
     // camera, we'll call it. We don't add any new files here.
     private CameraShake cameraShake;
+
+    public Action<float, float> OnHealthChanged;
 
     private void Awake()
     {
@@ -33,6 +36,12 @@ public class HealthComponent : MonoBehaviour
             Debug.Log($"[HealthComponent] Awake on {name}: Camera.main={(Camera.main!=null?Camera.main.name:"null")}, CameraShake={(cameraShake!=null?"found":"null")}");
         }
         catch { }
+    }
+
+    private void Start()
+    {
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
     }
 
     // Optional invincibility support (off by default). Player adapter can
@@ -64,9 +73,7 @@ public class HealthComponent : MonoBehaviour
 
         currentHealth -= amount;
 
-        // Fire legacy and typed events
-        try { onDamage?.Invoke(); } catch { }
-        try { OnDamaged?.Invoke(amount); } catch { }
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         // Trigger camera shake if available (use project's implementation)
         try

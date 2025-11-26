@@ -11,7 +11,9 @@ public class LevelManager : MonoBehaviour
     [Header("Configuración")]
     public float restartDelay = 1.5f;             // Tiempo de espera antes de reiniciar
     public bool useCheckpoints = true;           // Si se usan checkpoints o no
-    public Transform defaultSpawnPoint;           // Punto de spawn predeterminado
+    public Transform defaultSpawnPoint;         // Punto de spawn predeterminado
+    public HealthComponent playerHealth;
+    
     
     [Header("Efectos")]
     public bool useRestartEffect = true;          // Usar efecto de transición al reiniciar
@@ -75,6 +77,10 @@ public class LevelManager : MonoBehaviour
         
         // Buscar todos los objetos que implementan IRestartable
         FindRestartableObjects();
+
+        playerHealth.onDeath += () => {
+            RestartLevel();
+        };
     }
     
     // Método para encontrar todos los objetos que implementan IRestartable

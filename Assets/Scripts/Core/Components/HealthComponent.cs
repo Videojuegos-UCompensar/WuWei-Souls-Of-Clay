@@ -141,6 +141,7 @@ public class HealthComponent : MonoBehaviour
     private void Die()
     {
         onDeath?.Invoke(); // Dispara evento de muerte
+        OnHealthChanged?.Invoke(-1, maxHealth);
         gameObject.SetActive(false);
     }
 }

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3011752992036956202}
   - component: {fileID: 8918603260106259698}
   - component: {fileID: -2608273863891532893}
+  - component: {fileID: -2719793578114170762}
   m_Layer: 7
   m_Name: EnemyCaC
   m_TagString: Enemy
@@ -136,7 +137,7 @@ MonoBehaviour:
   playerDetection: {fileID: 0}
   detectionRange: 5
   attackRange: 0.5
-  attackDamage: 1
+  attackDamage: 5
   attackCooldown: 1.5
   playerLayer:
     serializedVersion: 2
@@ -238,6 +239,26 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &-2719793578114170762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2984251046530679491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaa8e3c081f9d084c8ef11e6bca723d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storePosition: 1
+  storeRotation: 1
+  storeScale: 0
+  storeVelocity: 1
+  storeActive: 1
+  preserveRigidbody: 1
+  preserveColliders: 1
+  preserveScripts: 1
 --- !u!1 &9029770048721687548
 GameObject:
   m_ObjectHideFlags: 0

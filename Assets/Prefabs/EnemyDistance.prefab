@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 3060474932995094912}
   - component: {fileID: 2613177317959215649}
   - component: {fileID: 373310535233449707}
+  - component: {fileID: 3464875076351767151}
   m_Layer: 7
   m_Name: EnemyDistance
   m_TagString: Enemy
@@ -258,9 +259,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  onDeath:
-    m_PersistentCalls:
-      m_Calls: []
   onDamage:
     m_PersistentCalls:
       m_Calls: []
@@ -293,6 +291,26 @@ MonoBehaviour:
   useAnimationEventForFire: 1
   attackStateName: Attack
   debugAttack: 0
+--- !u!114 &3464875076351767151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908320665202643183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaa8e3c081f9d084c8ef11e6bca723d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  storePosition: 1
+  storeRotation: 1
+  storeScale: 0
+  storeVelocity: 1
+  storeActive: 1
+  preserveRigidbody: 1
+  preserveColliders: 1
+  preserveScripts: 1
 --- !u!1 &2283892739772129861
 GameObject:
   m_ObjectHideFlags: 0

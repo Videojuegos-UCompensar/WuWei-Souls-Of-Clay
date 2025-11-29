@@ -1,80 +1,76 @@
 using UnityEngine;
 
 /// <summary>
-/// Ataque a distancia: instancia proyectiles hacia el target.
-/// Maneja su propio fireRate; también usa damage y cooldown.
+/// Componente de ataque a distancia que instancia proyectiles hacia el <see cref="target"/>.
+/// Esta clase delega la gestión del cooldown a la clase base <see cref="AttackComponent"/> mediante
+/// <see cref="CanAttack"/> y <c>lastAttackTime</c> para evitar duplicar la lógica de cadencia.
 /// </summary>
 public class RangedAttackComponent : AttackComponent
 {
     [Header("Ranged settings")]
+    [Tooltip("Prefab del proyectil que se instanciará.")]
     [SerializeField] private GameObject projectilePrefab;
-    [SerializeField] private Transform firePoint;             // desde donde salen los proyectiles
-    [SerializeField] private float projectileSpeed = 0.05f;
-    [SerializeField] private float fireRate = 1f;             // disparos por segundo
+
+    [Tooltip("Punto desde el que salen los proyectiles.")]
+    [SerializeField] private Transform firePoint;
+
+    [Tooltip("Datos configurables del proyectil (obligatorio para controlar velocidad).")]
     [SerializeField] private ProjectileData projectileData;
 
-    private float nextFireTime = -999f;
-
     /// <summary>
-    /// Comprueba si el componente está listo para disparar según su propio fireRate y cooldown.
+    /// Devuelve true si el componente está listo para disparar según la lógica de la clase base.
     /// </summary>
     public bool IsReadyToFire()
     {
-        return Time.time >= nextFireTime && CanAttack();
+        return CanAttack();
     }
 
+    /// <summary>
+    /// Intenta realizar un disparo. Devuelve true si el proyectil fue creado correctamente.
+    /// </summary>
     public override bool TryAttack()
     {
         if (target == null) return false;
-        if (Time.time < nextFireTime) return false;
-
-        // optional: usar CanAttack() para bloquear con attackCooldown también
-        if (!CanAttack()) return false;
-
-        nextFireTime = Time.time + 1f / Mathf.Max(0.0001f, fireRate); // evitar división por cero
-        lastAttackTime = Time.time;
+        if (!CanAttack()) return false; // respeta cooldown y restricciones de la clase base
 
         if (projectilePrefab == null || firePoint == null)
         {
-            Debug.LogWarning($"{name}: Projectile prefab o FirePoint no asignados.");
+            Debug.LogWarning($"{name}: projectilePrefab o firePoint no asignados.");
             return false;
         }
 
+        // marcar el tiempo de ataque para la lógica de cooldown de la base
+        lastAttackTime = Time.time;
+
         Vector2 dir = ((Vector2)target.position - (Vector2)firePoint.position).normalized;
         GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+        if (proj == null) return false;
 
+        // asignar velocidad al rigidbody si existe (usamos ProjectileData.speed)
         Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
-        float sp = projectileSpeed;
-        if (projectileData != null && projectileData.speed > 0) sp = projectileData.speed;
+        float sp = (projectileData != null && projectileData.speed > 0f) ? projectileData.speed : 1f;
+        if (projectileData == null) Debug.LogWarning($"{name}: projectileData no asignado, usando fallback speed={sp}.");
         if (rb != null) rb.velocity = dir * sp;
 
-        // si el projectile tiene script Projectile, pasarle el daño
+        // transferir configuración y daño al script del proyectil si existe
         projectile projectileScript = proj.GetComponent<projectile>();
         if (projectileScript != null)
         {
-            // pasar configuración de tipo (opcional)
             try { projectileScript.SetConfig(projectileData); } catch { }
 
-            // calcular daño final: base del AttackComponent + base del projectileData
             int finalDamage = damage;
             if (projectileData != null) finalDamage += projectileData.baseDamage;
-            // finalDamage computed and passed to projectile
             projectileScript.SetDamage(finalDamage);
-
             try { projectileScript.SetOwner(this.gameObject); } catch { }
         }
-        
 
-    // fired
         return true;
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (firePoint != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(firePoint.position, (Vector3)firePoint.position + Vector3.right * 0.5f);
-        }
+        if (firePoint == null) return;
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(firePoint.position, (Vector3)firePoint.position + Vector3.right * 0.5f);
     }
 }

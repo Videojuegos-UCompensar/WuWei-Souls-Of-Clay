@@ -20,7 +20,7 @@ public class SlugEnemy : MonoBehaviour
     [Header("Rangos de comportamiento")]
     [SerializeField] private float detectionRange = 10f;
     [SerializeField] private float escapeRange = 3f;
-    [SerializeField] private float shootRange = 7f;
+    [SerializeField] private float shootRange = 4f;
     [SerializeField] private float behaviorHysteresis = 0.4f; // evita oscilaciones entre estados
     
 
@@ -31,6 +31,15 @@ public class SlugEnemy : MonoBehaviour
 
     private enum EnemyState { Idle, Chasing, Fleeing, Shooting }
     private EnemyState currentState = EnemyState.Idle;
+
+    [Header("Edge handling")]
+    [Tooltip("Tiempo mínimo que la babosa dará marcha atrás cuando detecte un borde (s).")]
+    [SerializeField] private float forcedRetreatDuration = 0.6f;
+    [Tooltip("Distancia mínima (en unidades world) que retrocederá cuando esté acorralada.")]
+    [SerializeField] private float forcedRetreatDistance = 1.2f;
+    private bool isForcedRetreat = false;
+    private Coroutine forcedRetreatCoroutine = null;
+    private Vector3 forcedRetreatStart;
 
     private bool isAttacking = false;
     private Coroutine attackRoutine = null;
@@ -157,6 +166,15 @@ public class SlugEnemy : MonoBehaviour
         // If desired differs, switch; otherwise execute current state's behavior
         currentState = desired;
 
+        // If we are executing a forced retreat (edge escape), override normal behaviors
+        if (isForcedRetreat)
+        {
+            // Ensure movement is active while retreating; coroutine drives actual movement
+            SetAnimBoolSafe("IsScared", true);
+            SetAnimBoolSafe("IsMoving", true);
+            return;
+        }
+
         switch (currentState)
         {
             case EnemyState.Fleeing:
@@ -212,9 +230,9 @@ public class SlugEnemy : MonoBehaviour
         }
         else
         {
-            // No hay suelo delante: detenerse y evitar caer
-            movement?.Idle();
-            SetAnimBoolSafe("IsMoving", false);
+            // No hay suelo delante: iniciar un retreat forzado para alejarse del borde
+            Vector2 awayDir = (transform.position - player.position).normalized;
+            StartForcedRetreat(awayDir);
         }
     }
 
@@ -225,15 +243,14 @@ public class SlugEnemy : MonoBehaviour
         Vector2 awayDir = (transform.position - player.position).normalized;
         if (movement != null && movement.IsGroundAheadInDirection(awayDir))
         {
-            movement?.MoveAwayFrom(player.position);
+            // Forzamos un paso en la dirección awayDir (signo X). Usa MoveInDirection para un paso simple.
+            movement.MoveInDirection(Mathf.Sign(awayDir.x));
             SetAnimBoolSafe("IsMoving", true);
         }
         else
         {
-            // No hay suelo atrás: girar y quedarse en Idle para evitar caerse
-            movement?.FaceDirection(-Mathf.Sign(transform.localScale.x));
-            movement?.Idle();
-            SetAnimBoolSafe("IsMoving", false);
+            // No hay suelo atrás: iniciar un retreat forzado (moverse hacia el interior de la plataforma)
+            StartForcedRetreat(awayDir);
         }
     }
 
@@ -248,10 +265,87 @@ public class SlugEnemy : MonoBehaviour
         }
         else
         {
-            movement?.Idle();
-            SetAnimBoolSafe("IsMoving", false);
+            // Sin suelo: iniciar retreat forzado para evitar que se quede en el borde
+            Vector2 awayDir = (transform.position - player.position).normalized;
+            StartForcedRetreat(awayDir);
+            SetAnimBoolSafe("IsMoving", true);
         }
         // La lógica de disparo real corre en la coroutine AttackRoutine (iniciada/terminada por Update)
+    }
+
+    private void StartForcedRetreat(Vector2 awayDir)
+    {
+        if (isForcedRetreat) return;
+        if (forcedRetreatCoroutine != null) StopCoroutine(forcedRetreatCoroutine);
+        forcedRetreatCoroutine = StartCoroutine(ForcedRetreatRoutine(awayDir));
+    }
+
+    private System.Collections.IEnumerator ForcedRetreatRoutine(Vector2 awayDir)
+    {
+        isForcedRetreat = true;
+        forcedRetreatStart = transform.position;
+        float elapsed = 0f;
+
+        // Strategy:
+        // 1) Preferimos dar un paso hacia el jugador la PRIMERA vez si hay suelo en esa dirección
+        // 2) Si no es seguro moverse hacia el jugador, intentar retroceder (awayDir) como antes
+        // 3) En todo caso, respetar la duración máxima y distancia mínima configuradas
+
+        // Calculamos la dirección hacia el jugador
+        Vector2 toPlayerDir = (player != null) ? ((Vector2)player.position - (Vector2)transform.position).normalized : -awayDir;
+
+        bool moved = false;
+
+        // Intentar mover hacia el jugador si hay suelo en esa dirección
+        if (movement != null && movement.IsGroundAheadInDirection(toPlayerDir))
+        {
+            // Mover hacia el jugador hasta alcanzar la distancia mínima o tiempo límite
+            while (elapsed < forcedRetreatDuration && Vector2.Distance(transform.position, forcedRetreatStart) < forcedRetreatDistance)
+            {
+                movement.MoveTowards(player.position);
+                SetAnimBoolSafe("IsScared", true);
+                SetAnimBoolSafe("IsMoving", true);
+
+                // Si en algún momento delante ya no hay suelo, abortar para no caer
+                if (!movement.IsGroundAhead()) break;
+
+                elapsed += Time.deltaTime;
+                moved = true;
+                yield return null;
+            }
+        }
+
+        // Si no pudimos movernos hacia el jugador (no seguro), intentamos retroceder como fallback
+        if (!moved)
+        {
+            elapsed = 0f;
+            forcedRetreatStart = transform.position; // reiniciamos punto de referencia
+            while (elapsed < forcedRetreatDuration && Vector2.Distance(transform.position, forcedRetreatStart) < forcedRetreatDistance)
+            {
+                if (movement != null && movement.IsGroundAheadInDirection(awayDir))
+                {
+                    // Forzamos un paso simple hacia awayDir para garantizar separación del borde
+                    movement.MoveInDirection(Mathf.Sign(awayDir.x));
+                }
+                else
+                {
+                    // Si no hay suelo ni adelante ni atrás, detenemos el intento para evitar caer
+                    break;
+                }
+
+                SetAnimBoolSafe("IsScared", true);
+                SetAnimBoolSafe("IsMoving", true);
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+        }
+
+        // Finalizar retreat: volver a Idle y permitir comportamiento normal
+        isForcedRetreat = false;
+        forcedRetreatCoroutine = null;
+        movement?.Idle();
+        SetAnimBoolSafe("IsMoving", false);
     }
 
     // Anim event: opcional, se puede usar para efectos (no necesario para disparo)

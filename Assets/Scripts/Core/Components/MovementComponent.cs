@@ -8,13 +8,17 @@ public class MovementComponent : MonoBehaviour
     [SerializeField] private float moveSpeed = 3f;
 
     [Header("Detección de suelo")]
+    [Tooltip("Transform usado como origen para los raycasts de suelo (normalmente un child bajo el collider).")]
     [SerializeField] private Transform groundCheck;
+    [Tooltip("Distancia vertical para comprobar si hay suelo debajo del groundCheck.")]
     [SerializeField] private float groundCheckDistance = 1f;
+    [Tooltip("Distancia vertical para comprobar un 'ledge' delante del groundCheck.")]
     [SerializeField] private float ledgeCheckDistance = 0.5f;
+    [Tooltip("Desplazamiento horizontal desde groundCheck para el raycast de ledge (ej. 0.4).")]
+    [SerializeField] private float ledgeCheckForward = 0.4f;
     [SerializeField] private LayerMask groundLayer;
 
     private Rigidbody2D rb;
-    private SpriteRenderer sr;
     private Animator anim;
 
     private Vector2 moveDirection;
@@ -23,7 +27,6 @@ public class MovementComponent : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
     }
@@ -31,12 +34,13 @@ public class MovementComponent : MonoBehaviour
     private void FixedUpdate()
     {
         rb.velocity = new Vector2(moveDirection.x * moveSpeed, rb.velocity.y);
-        anim.SetBool("IsMoving", moveDirection != Vector2.zero);
+        if (anim != null) anim.SetBool("IsMoving", moveDirection != Vector2.zero);
 
     }
 
     public void MoveTowards(Vector2 targetPosition)
     {
+        // Solo nos interesa la componente X para este movimiento 2D
         moveDirection = (targetPosition - (Vector2)transform.position).normalized;
         moveDirection = new Vector2(moveDirection.x, 0f);
         FaceDirection(moveDirection.x);
@@ -45,13 +49,29 @@ public class MovementComponent : MonoBehaviour
     public void Idle()
     {
         moveDirection = Vector2.zero;
-        anim.SetBool("IsMoving", false);
+        if (anim != null) anim.SetBool("IsMoving", false);
     }
 
     public void MoveAwayFrom(Vector2 target)
     {
         Vector2 direction = ((Vector2)transform.position - target).normalized;
         moveDirection = new Vector2(direction.x, 0);
+        FaceDirection(moveDirection.x);
+    }
+
+    /// <summary>
+    /// Fuerza movimiento en una dirección X (-1..1). Útil para hacer un paso atrás rápido.
+    /// </summary>
+    public void MoveInDirection(float dirX)
+    {
+        float sign = Mathf.Sign(dirX);
+        if (Mathf.Approximately(sign, 0f))
+        {
+            moveDirection = Vector2.zero;
+            return;
+        }
+
+        moveDirection = new Vector2(sign, 0f);
         FaceDirection(moveDirection.x);
     }
 
@@ -85,8 +105,8 @@ public class MovementComponent : MonoBehaviour
         // Revisión directa hacia abajo
         bool groundBelow = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
 
-        // Revisión hacia abajo un poco más adelante
-        Vector2 ledgeOrigin = groundCheck.position + (Vector3)(dir * 0.4f);
+        // Revisión hacia abajo un poco más adelante (configurable por ledgeCheckForward)
+        Vector2 ledgeOrigin = groundCheck.position + (Vector3)(dir * ledgeCheckForward);
         bool ledgeAhead = Physics2D.Raycast(ledgeOrigin, Vector2.down, ledgeCheckDistance, groundLayer);
 
         return groundBelow && ledgeAhead;
@@ -104,7 +124,7 @@ public class MovementComponent : MonoBehaviour
         Vector2 dir = signX >= 0 ? Vector2.right : Vector2.left;
 
         bool groundBelow = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
-        Vector2 ledgeOrigin = groundCheck.position + (Vector3)(dir * 0.4f);
+        Vector2 ledgeOrigin = groundCheck.position + (Vector3)(dir * ledgeCheckForward);
         bool ledgeAhead = Physics2D.Raycast(ledgeOrigin, Vector2.down, ledgeCheckDistance, groundLayer);
 
         return groundBelow && ledgeAhead;

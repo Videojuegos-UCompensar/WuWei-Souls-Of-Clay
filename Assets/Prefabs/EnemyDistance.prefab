@@ -220,10 +220,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff728f9b17eeccc40bbe8f47397d54ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 1
   groundCheck: {fileID: 915123648341178738}
   groundCheckDistance: 1
   ledgeCheckDistance: 0.5
+  ledgeCheckForward: 0.4
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -240,11 +241,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
-  attackCooldown: 0.5
+  attackCooldown: 5
   projectilePrefab: {fileID: 2110250488190885909, guid: abf24a9ce4f7b1b4da9bca4d5c8d34d3, type: 3}
   firePoint: {fileID: 9068842981153645224}
-  projectileSpeed: 5
-  fireRate: 1
   projectileData: {fileID: 11400000, guid: 05969c77c14a7d347a25ad46ef8811e4, type: 2}
 --- !u!114 &2613177317959215649
 MonoBehaviour:
@@ -284,9 +283,11 @@ MonoBehaviour:
   hitTriggerName: Hit
   hitStateName: Hit
   detectionRange: 10
-  escapeRange: 3
-  shootRange: 7
+  escapeRange: 2
+  shootRange: 9
   behaviorHysteresis: 0.4
+  forcedRetreatDuration: 0.6
+  forcedRetreatDistance: 1.2
   attackAnimDelay: 0.15
   useAnimationEventForFire: 1
   attackStateName: Attack
@@ -336,7 +337,7 @@ Transform:
   m_GameObject: {fileID: 2283892739772129861}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.316, y: -0.45, z: 0}
+  m_LocalPosition: {x: 0.723, y: -0.45, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

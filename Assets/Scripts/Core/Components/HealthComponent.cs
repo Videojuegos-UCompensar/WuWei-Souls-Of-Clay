@@ -147,16 +147,13 @@ public class HealthComponent : MonoBehaviour
         RestoreFullHealth();
     }
 
-   private void Die()
+
+    private void Die()
 {
-    onDeath?.Invoke();
+    Debug.Log("MURIÓ " + name);
 
-    // Si NO es el jugador, se desactiva
-    if (!CompareTag("Player"))
-    {
-       Destroy(gameObject);
-    }
+    gameObject.SetActive(false);
+}
 }
 
 
-}

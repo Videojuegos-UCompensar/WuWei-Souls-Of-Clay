@@ -26882,14 +26882,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0eef0cf23a705e745b4a06d01ce7f062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  storePosition: 0
-  storeRotation: 0
-  storeScale: 0
-  storeVelocity: 0
-  storeActive: 0
-  preserveRigidbody: 0
-  preserveColliders: 0
-  preserveScripts: 0
+  storePosition: 1
+  storeRotation: 1
+  storeScale: 1
+  storeVelocity: 1
+  storeActive: 1
+  preserveRigidbody: 1
+  preserveColliders: 1
+  preserveScripts: 1
 --- !u!114 &1049642243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93160,6 +93160,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyDistance
       objectReference: {fileID: 0}
+    - target: {fileID: 3464875076351767151, guid: 8793822ca89e76d43aeebca252a865e5, type: 3}
+      propertyPath: storeScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7591328396594935716, guid: 8793822ca89e76d43aeebca252a865e5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -21.878798
@@ -93199,6 +93203,18 @@ PrefabInstance:
     - target: {fileID: 7591328396594935716, guid: 8793822ca89e76d43aeebca252a865e5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8590748268936001081, guid: 8793822ca89e76d43aeebca252a865e5, type: 3}
+      propertyPath: flashColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8590748268936001081, guid: 8793822ca89e76d43aeebca252a865e5, type: 3}
+      propertyPath: flashColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8590748268936001081, guid: 8793822ca89e76d43aeebca252a865e5, type: 3}
+      propertyPath: flashColor.r
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

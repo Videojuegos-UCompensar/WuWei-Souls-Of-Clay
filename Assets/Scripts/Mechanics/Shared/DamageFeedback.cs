@@ -110,13 +110,13 @@ Debug.Log("Sprite encontrado en: " + spriteRenderer.gameObject.name);
         transform.localScale = originalScale;
     }
 
-    IEnumerator HitPause()
-{
-    Time.timeScale = 0f;
-    yield return new WaitForSecondsRealtime(hitPauseTime);
-    Time.timeScale = 1f;
-}
-
+    private IEnumerator HitPause()
+    {
+        float originalTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(hitPauseTime);
+        Time.timeScale = originalTimeScale;
+    }
 
     private void OnDisable()
     {

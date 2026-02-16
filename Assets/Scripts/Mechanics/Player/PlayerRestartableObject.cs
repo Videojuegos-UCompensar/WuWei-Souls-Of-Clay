@@ -38,6 +38,23 @@ public class PlayerRestartableObject : RestartableObject
     animator.Update(0f);
     animator.Play("Idle", 0, 0f);
 }
+    // 🔄 Volver visible
+foreach (var r in GetComponentsInChildren<Renderer>())
+    r.enabled = true;
+
+// 🔄 Reactivar colisiones
+foreach (var col in GetComponentsInChildren<Collider2D>())
+    col.enabled = true;
+
+// 🔄 Reactivar físicas
+if (rb != null)
+{
+    rb.simulated = true;
+    rb.velocity = Vector2.zero;
+    rb.angularVelocity = 0f;
+}
+
+
     OnCustomRestart();
     }
 

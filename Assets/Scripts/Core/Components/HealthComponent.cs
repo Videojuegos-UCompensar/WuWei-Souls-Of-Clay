@@ -6,6 +6,9 @@ using UnityEngine.Events;
 public class HealthComponent : MonoBehaviour
 	, IRestartable
 {
+    private GameObject lastDamageSource;
+    public GameObject LastDamageSource => lastDamageSource;
+
     [Header("Configuración de Vida")]
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
@@ -63,7 +66,7 @@ public class HealthComponent : MonoBehaviour
         isInvincible = false;
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, GameObject damageSource = null)
     {
         if (amount <= 0 || currentHealth <= 0)
             return;
@@ -72,6 +75,10 @@ public class HealthComponent : MonoBehaviour
         Debug.Log($"[HealthComponent] {name} TakeDamage: amount={amount}, before={before}");
 
         currentHealth -= amount;
+
+        // 👇 AGREGA ESTO
+        onDamage?.Invoke();
+        OnDamaged?.Invoke(amount);
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
@@ -94,6 +101,8 @@ public class HealthComponent : MonoBehaviour
         }
 
         Debug.Log($"[HealthComponent] {name} after damage: current={currentHealth}/{maxHealth}");
+
+        lastDamageSource = damageSource;
 
         if (currentHealth <= 0)
         {
@@ -138,10 +147,16 @@ public class HealthComponent : MonoBehaviour
         RestoreFullHealth();
     }
 
-    private void Die()
+   private void Die()
+{
+    onDeath?.Invoke();
+
+    // Si NO es el jugador, se desactiva
+    if (!CompareTag("Player"))
     {
-        onDeath?.Invoke(); // Dispara evento de muerte
-        OnHealthChanged?.Invoke(-1, maxHealth);
-        gameObject.SetActive(false);
+       Destroy(gameObject);
     }
+}
+
+
 }

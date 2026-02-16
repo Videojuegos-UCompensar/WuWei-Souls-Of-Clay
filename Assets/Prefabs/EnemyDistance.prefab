@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 2613177317959215649}
   - component: {fileID: 373310535233449707}
   - component: {fileID: 3464875076351767151}
+  - component: {fileID: 8590748268936001081}
   m_Layer: 7
   m_Name: EnemyDistance
   m_TagString: Enemy
@@ -312,6 +313,27 @@ MonoBehaviour:
   preserveRigidbody: 1
   preserveColliders: 1
   preserveScripts: 1
+--- !u!114 &8590748268936001081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908320665202643183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db1fd1c5d5f76742960d317197a287d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitTrigger: Hit
+  hitStateName: Hit
+  flashSprite: 1
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashCount: 3
+  flashInterval: 0.06
+  hitPauseTime: 0.05
+  scalePunchAmount: 0.15
+  scaleSpeed: 12
 --- !u!1 &2283892739772129861
 GameObject:
   m_ObjectHideFlags: 0

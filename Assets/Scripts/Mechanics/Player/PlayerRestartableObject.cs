@@ -3,12 +3,14 @@ using UnityEngine;
 public class PlayerRestartableObject : RestartableObject
 {
     private Vector3 savedPosition;
+    private Animator animator;
     private Quaternion savedRotation;
 
     void Awake()
     {
     savedPosition = transform.position;
     savedRotation = transform.rotation;
+    animator = GetComponent<Animator>();
     }
 
     public override void OnLevelRestart()
@@ -30,6 +32,12 @@ public class PlayerRestartableObject : RestartableObject
         rb.angularVelocity = 0;
     }
 
+    if (animator != null)
+{
+    animator.Rebind();
+    animator.Update(0f);
+    animator.Play("Idle", 0, 0f);
+}
     OnCustomRestart();
     }
 

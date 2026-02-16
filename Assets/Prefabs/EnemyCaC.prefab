@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 8918603260106259698}
   - component: {fileID: -2608273863891532893}
   - component: {fileID: -2719793578114170762}
+  - component: {fileID: 455960795040587553}
+  - component: {fileID: 1196582496934828191}
   m_Layer: 7
   m_Name: EnemyCaC
   m_TagString: Enemy
@@ -259,6 +261,49 @@ MonoBehaviour:
   preserveRigidbody: 1
   preserveColliders: 1
   preserveScripts: 1
+--- !u!114 &455960795040587553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2984251046530679491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e642820fb5a1da458fa2fb7433bc41e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  onDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1196582496934828191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2984251046530679491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4db1fd1c5d5f76742960d317197a287d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitTrigger: Hit
+  hitStateName: Hit
+  flashSprite: 1
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashCount: 3
+  flashInterval: 0.06
+  hitPauseTime: 0.05
+  scalePunchAmount: 0.15
+  scaleSpeed: 12
 --- !u!1 &9029770048721687548
 GameObject:
   m_ObjectHideFlags: 0

@@ -112,6 +112,7 @@ public class HealthComponent : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
         try { OnHealed?.Invoke(amount); } catch { }
     }
 
@@ -120,16 +121,18 @@ public class HealthComponent : MonoBehaviour
     /// mirrors the behaviour previously provided by PlayerHealth.RestoreFullHealth().
     /// </summary>
     public void RestoreFullHealth()
-    {
-        currentHealth = maxHealth;
-        // Reactivate colliders if any
-        Collider2D[] cols = GetComponents<Collider2D>();
-        foreach (var c in cols) if (c != null) c.enabled = true;
+{
+    currentHealth = maxHealth;
 
-        // Re-enable mono behaviours (best-effort)
-        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
-        foreach (var s in scripts) if (s != null) s.enabled = true;
-    }
+    OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+    Collider2D[] cols = GetComponents<Collider2D>();
+    foreach (var c in cols) if (c != null) c.enabled = true;
+
+    MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+    foreach (var s in scripts) if (s != null) s.enabled = true;
+}
+
 
     /// <summary>
     /// Set health to a specific value (used by LevelManager or debug tools)

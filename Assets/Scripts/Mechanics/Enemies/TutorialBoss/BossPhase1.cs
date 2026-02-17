@@ -130,7 +130,7 @@ public class BossPhase1 : MonoBehaviour
             HealthComponent hp = hit.GetComponent<HealthComponent>();
             if (hp != null)
             {
-                hp.TakeDamage(damage);
+                hp.TakeDamage(damage,gameObject);
             }
         }
     }

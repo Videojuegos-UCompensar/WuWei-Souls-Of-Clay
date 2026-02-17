@@ -307,7 +307,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   storePosition: 1
   storeRotation: 1
-  storeScale: 0
+  storeScale: 1
   storeVelocity: 1
   storeActive: 1
   preserveRigidbody: 1
@@ -328,7 +328,7 @@ MonoBehaviour:
   hitTrigger: Hit
   hitStateName: Hit
   flashSprite: 1
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashColor: {r: 1, g: 0, b: 0, a: 1}
   flashCount: 3
   flashInterval: 0.06
   hitPauseTime: 0.05

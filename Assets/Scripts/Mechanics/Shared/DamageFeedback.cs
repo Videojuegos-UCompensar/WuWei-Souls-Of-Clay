@@ -23,6 +23,7 @@ public class DamageFeedback : MonoBehaviour
 
     private Animator animator;
     private SpriteRenderer spriteRenderer;
+    private Color originalColor;
     private HealthComponent health;
 
     private Coroutine flashRoutine;
@@ -33,7 +34,7 @@ public class DamageFeedback : MonoBehaviour
         health = GetComponent<HealthComponent>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-Debug.Log("Sprite encontrado en: " + spriteRenderer.gameObject.name);
+        originalColor = spriteRenderer.color;
         originalScale = transform.localScale;
 
         if (health != null)
@@ -69,15 +70,15 @@ Debug.Log("Sprite encontrado en: " + spriteRenderer.gameObject.name);
 
         private IEnumerator FlashRoutine()
 {
-    Color originalColor = spriteRenderer.color;
+    
 
     for (int i = 0; i < flashCount; i++)
     {
         spriteRenderer.color = flashColor;
-        yield return new WaitForSeconds(flashInterval);
+        yield return new WaitForSecondsRealtime(flashInterval);
 
         spriteRenderer.color = originalColor;
-        yield return new WaitForSeconds(flashInterval);
+        yield return new WaitForSecondsRealtime(flashInterval);
     }
 
     spriteRenderer.color = originalColor;
@@ -106,6 +107,13 @@ Debug.Log("Sprite encontrado en: " + spriteRenderer.gameObject.name);
 
         transform.localScale = originalScale;
     }
+
+    public void ResetVisual()
+{
+    StopAllCoroutines();
+    spriteRenderer.color = originalColor;
+}
+
 
     private void OnDisable()
     {

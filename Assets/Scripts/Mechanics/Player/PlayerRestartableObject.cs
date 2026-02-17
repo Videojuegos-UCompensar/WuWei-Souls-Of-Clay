@@ -18,6 +18,12 @@ public class PlayerRestartableObject : RestartableObject
 
     // Luego aplicas la lógica especial del jugador
 
+    var feedback = GetComponent<DamageFeedback>();
+    if (feedback != null)
+    {
+    feedback.ResetVisual();
+    }
+
     if (storePosition)
         transform.position = savedPosition;
 

@@ -68,6 +68,17 @@ public class EjecutarCinematica : MonoBehaviour
         }
     }
 
+private void OnPlayerDeath()
+{
+    if (cinematicaEjecutada) return;
+
+    // Solo si el boss fue quien lo mató
+    if (playerHealth.LastDamageSource == bossAI.gameObject)
+    {
+        Ejecutar();
+    }
+}
+
     private void Ejecutar()
 {
     if (cinematicaEjecutada) return;
@@ -78,17 +89,6 @@ public class EjecutarCinematica : MonoBehaviour
         bossAI.enabled = false;
 
     playableDirector.Play();
-}
-
-private void OnPlayerDeath()
-{
-    if (cinematicaEjecutada) return;
-
-    // Solo si el boss fue quien lo mató
-    if (playerHealth.LastDamageSource == bossAI.gameObject)
-    {
-        Ejecutar();
-    }
 }
 
 

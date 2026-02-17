@@ -85,9 +85,10 @@ private void OnPlayerDeath()
     if (cinematicaEjecutada) return;
 
     // Solo si el boss fue quien lo mató
-   
+    if (playerHealth.LastDamageSource == bossAI.gameObject)
+    {
         Ejecutar();
-    
+    }
 }
 
 

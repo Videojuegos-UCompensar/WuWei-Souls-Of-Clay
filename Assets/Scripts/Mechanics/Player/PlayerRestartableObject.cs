@@ -3,14 +3,12 @@ using UnityEngine;
 public class PlayerRestartableObject : RestartableObject
 {
     private Vector3 savedPosition;
-    private Animator animator;
     private Quaternion savedRotation;
 
     void Awake()
     {
     savedPosition = transform.position;
     savedRotation = transform.rotation;
-    animator = GetComponent<Animator>();
     }
 
     public override void OnLevelRestart()
@@ -31,30 +29,6 @@ public class PlayerRestartableObject : RestartableObject
         rb.velocity = Vector2.zero;
         rb.angularVelocity = 0;
     }
-
-    if (animator != null)
-{
-    animator.Rebind();
-    animator.Update(0f);
-    animator.Play("Idle", 0, 0f);
-}
-    // 🔄 Volver visible
-foreach (var r in GetComponentsInChildren<Renderer>())
-    r.enabled = true;
-
-// 🔄 Reactivar colisiones
-foreach (var col in GetComponentsInChildren<Collider2D>())
-    col.enabled = true;
-
-// 🔄 Reactivar físicas
-if (rb != null)
-{
-    rb.simulated = true;
-    rb.velocity = Vector2.zero;
-    rb.angularVelocity = 0f;
-}
-
-
     OnCustomRestart();
     }
 

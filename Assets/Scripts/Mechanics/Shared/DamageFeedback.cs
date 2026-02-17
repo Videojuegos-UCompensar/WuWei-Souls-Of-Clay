@@ -65,9 +65,6 @@ Debug.Log("Sprite encontrado en: " + spriteRenderer.gameObject.name);
 
         // 🥊 Punch scale
         StartCoroutine(ScalePunch());
-
-        // 🛑 Hit pause
-        StartCoroutine(HitPause());
     }
 
         private IEnumerator FlashRoutine()
@@ -108,14 +105,6 @@ Debug.Log("Sprite encontrado en: " + spriteRenderer.gameObject.name);
         }
 
         transform.localScale = originalScale;
-    }
-
-    private IEnumerator HitPause()
-    {
-        float originalTimeScale = Time.timeScale;
-        Time.timeScale = 0f;
-        yield return new WaitForSecondsRealtime(hitPauseTime);
-        Time.timeScale = originalTimeScale;
     }
 
     private void OnDisable()

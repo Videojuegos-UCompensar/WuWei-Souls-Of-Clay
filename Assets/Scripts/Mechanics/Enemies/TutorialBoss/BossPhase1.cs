@@ -1,9 +1,35 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BossPhase1 : MonoBehaviour
 {
     public enum BossState { Idle, Chase, Jump, Attack }
+
+    private bool phase2Activated = false;
+    private HealthComponent health;
+    private bool isPerformingSpecial = false;
+    private float originalAttackRange;
+
+
+
+    [Header("Phase 2")]
+[SerializeField] private bool enableSpecialAttack = false;
+
+[Header("Dash")]
+[SerializeField] private float dashForce = 35f;
+[SerializeField] private float dashDuration = 0.3f;
+
+[Header("Vertical Slash")]
+[SerializeField] private GameObject windSlashPrefab;
+[SerializeField] private Transform slashSpawnPoint;
+
+
+[Header("Orbs")]
+[SerializeField] private GameObject orbPrefab;
+[SerializeField] private int orbCount = 3;
+[SerializeField] private float orbSpawnRadius = 1.5f;
+
 
     [Header("Referencias")]
     public Transform player;
@@ -21,7 +47,7 @@ public class BossPhase1 : MonoBehaviour
     public float jumpForce = 8f;
 
     [Header("Ataque")]
-    public int damage = 10;
+    public int damage = 1;
     public float attackCooldown = 1.5f;
     public float attackRadius = 1f;
 
@@ -34,14 +60,24 @@ public class BossPhase1 : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        health = GetComponent<HealthComponent>();
+        health.OnHealthChanged += CheckPhase;
+        originalAttackRange = attackRange;
     }
 
-    private void Update()
+private void Update()
 {
     if (player == null) return;
 
     float distance = Vector2.Distance(transform.position, player.position);
     playerDetected = distance <= detectionRange;
+
+    // 🔥 Si está haciendo especial → solo mirar al jugador
+    if (isPerformingSpecial)
+    {
+        FacePlayer();
+        return;
+    }
 
     if (!playerDetected)
     {
@@ -49,15 +85,27 @@ public class BossPhase1 : MonoBehaviour
         return;
     }
 
-    if (distance <= attackRange)
-    {
-        ChangeState(BossState.Attack);
-        TryAttack(); // 👈 IMPORTANTE: llamarlo aquí siempre
-    }
+    float currentRange = attackRange;
+
+if (enableSpecialAttack && Random.value < 0.3f) // 30% probabilidad
+    currentRange = 10f;
+
+if (distance <= currentRange)
+{
+    ChangeState(BossState.Attack);
+    TryAttack();
+}
+
     else
     {
         ChangeState(BossState.Chase);
     }
+}
+
+private void FacePlayer()
+{
+    float direction = Mathf.Sign(player.position.x - transform.position.x);
+    transform.localScale = new Vector3(direction, 1, 1);
 }
 
 
@@ -95,6 +143,41 @@ public class BossPhase1 : MonoBehaviour
     }
 }
 
+private void CheckPhase(float current, float max)
+{
+    float percentage = current / max;
+
+    if (!phase2Activated && percentage <= 0.75f)
+    {
+        ActivatePhase2();
+    }
+}
+
+private void ActivatePhase2()
+{
+    phase2Activated = true;
+
+    Debug.Log("FASE 2 ACTIVADA");
+
+    // Cambiar comportamiento IA
+    moveSpeed *= 1.1f;
+    attackCooldown *= 1f;
+
+    // Opcional: pequeña pausa dramática
+    StartCoroutine(PhaseTransition());
+}
+
+private IEnumerator PhaseTransition()
+{
+    // Mini freeze
+    Time.timeScale = 0f;
+    yield return new WaitForSecondsRealtime(0.2f);
+    Time.timeScale = 1f;
+
+    // Activar nuevos ataques
+    enableSpecialAttack = true;
+}
+
 
     void MoveTowardsPlayer()
     {
@@ -112,13 +195,153 @@ public class BossPhase1 : MonoBehaviour
     }
 
     void TryAttack()
+{
+    if (Time.time < lastAttackTime + attackCooldown) return;
+
+    lastAttackTime = Time.time;
+
+    if (enableSpecialAttack)
     {
-        if (Time.time < lastAttackTime + attackCooldown) return;
+        int random = Random.Range(0, 3);
 
-        lastAttackTime = Time.time;
+        switch (random)
+        {
+            case 0:
+                StartCoroutine(DashAttack());
+                break;
 
+            case 1:
+                StartCoroutine(VerticalSlashRoutine());
+                break;
+
+            case 2:
+                StartCoroutine(SummonOrbsRoutine());
+                break;
+        }
+    }
+    else
+    {
         animator.SetTrigger("Attack");
     }
+}
+
+
+private IEnumerator DashAttack()
+{
+    isPerformingSpecial = true;
+
+    animator.SetTrigger("Dash");
+
+    yield return new WaitForSeconds(0.1f);
+
+    float direction = Mathf.Sign(transform.localScale.x);
+
+    rb.velocity = new Vector2(direction * dashForce, 0);
+
+    yield return new WaitForSeconds(dashDuration);
+
+    rb.velocity = Vector2.zero;
+
+    isPerformingSpecial = false;
+
+    attackRange = originalAttackRange;
+}
+
+public void StopBoss()
+{
+    // Cancelar coroutines activas (dash, slash, summon)
+    StopAllCoroutines();
+
+    // Parar movimiento
+    rb.velocity = Vector2.zero;
+
+    // Reset estados
+    isPerformingSpecial = false;
+    enableSpecialAttack = false;
+
+    // Destruir orbes activas
+    HomingOrb[] orbs = FindObjectsOfType<HomingOrb>();
+    foreach (HomingOrb orb in orbs)
+    {
+        Destroy(orb.gameObject);
+    }
+
+    // Destruir cortes de viento activos
+    WindSlash[] slashes = FindObjectsOfType<WindSlash>();
+    foreach (WindSlash slash in slashes)
+    {
+        Destroy(slash.gameObject);
+    }
+}
+
+
+
+private IEnumerator VerticalSlashRoutine()
+{
+    isPerformingSpecial = true;
+
+    animator.SetTrigger("VerticalSlash");
+
+    yield return new WaitForSeconds(0.2f);
+
+    SpawnWindSlash();
+
+    yield return new WaitForSeconds(0.3f);
+
+    isPerformingSpecial = false;
+
+    attackRange = originalAttackRange;
+}
+
+private void SpawnWindSlash()
+{
+    if (windSlashPrefab == null || slashSpawnPoint == null)
+        return;
+
+    float direction = Mathf.Sign(transform.localScale.x);
+
+    GameObject slash = Instantiate(
+        windSlashPrefab,
+        slashSpawnPoint.position,
+        Quaternion.identity
+    );
+
+    slash.transform.localScale = new Vector3(direction, 1, 1);
+
+    WindSlash ws = slash.GetComponent<WindSlash>();
+    if (ws != null)
+        ws.SetDirection(new Vector2(direction, 0));
+}
+
+
+private IEnumerator SummonOrbsRoutine()
+{
+    isPerformingSpecial = true;
+
+    animator.SetTrigger("Summon");
+
+    yield return new WaitForSeconds(0.3f);
+
+    for (int i = 0; i < orbCount; i++)
+    {
+    Vector2 spawnPos =
+            (Vector2)transform.position +
+            Random.insideUnitCircle * orbSpawnRadius;
+
+        GameObject orb = Instantiate(orbPrefab, spawnPos, Quaternion.identity);
+
+        HomingOrb homing = orb.GetComponent<HomingOrb>();
+        if (homing != null)
+            homing.SetTarget(player);
+    }
+
+    yield return new WaitForSeconds(0.5f);
+
+    isPerformingSpecial = false;
+
+    attackRange = originalAttackRange;
+}
+
 
     // 🔥 LLAMAR DESDE ANIMACIÓN (Animation Event)
     public void DoDamage()

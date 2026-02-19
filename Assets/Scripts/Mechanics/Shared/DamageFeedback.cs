@@ -63,9 +63,6 @@ public class DamageFeedback : MonoBehaviour
 
             flashRoutine = StartCoroutine(FlashRoutine());
         }
-
-        // 🥊 Punch scale
-        StartCoroutine(ScalePunch());
     }
 
         private IEnumerator FlashRoutine()
@@ -85,8 +82,7 @@ public class DamageFeedback : MonoBehaviour
 }
 
 
-    private IEnumerator ScalePunch()
-    {
+    private IEnumerator ScalePunch()    {
         Vector3 targetScale = originalScale * (1 + scalePunchAmount);
 
         float t = 0f;

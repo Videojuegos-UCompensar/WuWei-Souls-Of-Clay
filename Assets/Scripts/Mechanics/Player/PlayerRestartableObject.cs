@@ -35,6 +35,23 @@ public class PlayerRestartableObject : RestartableObject
         rb.velocity = Vector2.zero;
         rb.angularVelocity = 0;
     }
+
+    var movimiento = GetComponent<Movimiento2D>();
+if (movimiento != null)
+{
+    movimiento.mirandoDrecha = true;
+
+    // Si usas localScale para el flip
+    Vector3 scale = transform.localScale;
+    scale.x = Mathf.Abs(scale.x);
+    transform.localScale = scale;
+
+    // Si usas SpriteRenderer.flipX (mejor opción)
+    var sr = GetComponent<SpriteRenderer>();
+    if (sr != null)
+        sr.flipX = false;
+}
+
     OnCustomRestart();
     }
 

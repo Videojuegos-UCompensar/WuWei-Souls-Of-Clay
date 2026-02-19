@@ -91,7 +91,7 @@ public class projectile : MonoBehaviour
             if (col != null) col.enabled = false;
             // Debug: quien fue el owner y cuanto daño aplicamos
             try { Debug.Log($"[projectile] {name} hit {h.gameObject.name} owner={(owner!=null?owner.name:"null")} damage={damage}"); } catch { }
-            h.TakeDamage(damage);
+            h.TakeDamage(damage, owner);
             Destroy(gameObject);
             return;
         }

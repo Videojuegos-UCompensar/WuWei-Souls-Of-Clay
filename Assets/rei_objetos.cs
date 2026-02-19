@@ -134,6 +134,22 @@ public class RestartableObject : MonoBehaviour, IRestartable
         {
             RestoreRigidbodyState();
         }
+
+        var feedback = GetComponent<DamageFeedback>();
+    if (feedback != null)
+    {
+    feedback.ResetVisual();
+    }
+
+    // Si usas localScale para el flip
+    Vector3 scale = transform.localScale;
+    scale.x = Mathf.Abs(scale.x);
+    transform.localScale = scale;
+
+    // Si usas SpriteRenderer.flipX (mejor opción)
+    var sr = GetComponent<SpriteRenderer>();
+    if (sr != null)
+        sr.flipX = false;
         
         // Restaurar transformación
         if (storePosition)

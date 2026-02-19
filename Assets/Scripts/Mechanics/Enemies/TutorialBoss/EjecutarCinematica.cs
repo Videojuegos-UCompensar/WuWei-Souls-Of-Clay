@@ -8,6 +8,8 @@ public class EjecutarCinematica : MonoBehaviour
     public PlayableDirector playableDirector;
     public HealthComponent bossHealth;
     public BossPhase1 bossAI;
+    public HomingOrb bossA1;
+    public WindSlash bossA2;
 
     [Range(0f,1f)]
     public float healthThreshold = 0.25f;
@@ -16,6 +18,9 @@ public class EjecutarCinematica : MonoBehaviour
 
     private bool cinematicaEjecutada = false;
     private float timer = 0f;
+
+    public Movimiento2D playerMovement;
+    public Transform playerTransform;
 
     private void Start()
 {
@@ -85,11 +90,22 @@ private void OnPlayerDeath()
 
     cinematicaEjecutada = true;
 
-    if (bossAI != null)
-        bossAI.enabled = false;
+     if (bossAI != null)
+    {
+        bossAI.StopBoss();    // 🔥 mata especiales en curso
+        bossAI.enabled = false;         // desactiva IA
+    }
+
+    // Colocar al jugador en la posición exacta
+    if (playerTransform != null)
+    {
+        playerTransform.position = new Vector3(396.52f, 11.44f, playerTransform.position.z);
+    }
 
     playableDirector.Play();
 }
+
+
 
 
 

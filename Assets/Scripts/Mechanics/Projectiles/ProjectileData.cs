@@ -7,7 +7,7 @@ public class ProjectileData : ScriptableObject
     public int baseDamage = 0; // additional/static damage for this projectile type
 
     [Header("Movement")]
-    public float speed = 1f;
+    public float speed = 0.5f;
     public float lifeTime = 10f;
 
     [Header("Behavior")]

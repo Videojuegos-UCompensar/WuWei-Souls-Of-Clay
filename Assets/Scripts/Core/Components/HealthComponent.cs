@@ -6,6 +6,9 @@ using UnityEngine.Events;
 public class HealthComponent : MonoBehaviour
 	, IRestartable
 {
+    private GameObject lastDamageSource;
+    public GameObject LastDamageSource => lastDamageSource;
+
     [Header("Configuración de Vida")]
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
@@ -40,8 +43,7 @@ public class HealthComponent : MonoBehaviour
 
     private void Start()
     {
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
-
+       OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     // Optional invincibility support (off by default). Player adapter can
@@ -63,7 +65,7 @@ public class HealthComponent : MonoBehaviour
         isInvincible = false;
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, GameObject damageSource = null)
     {
         if (amount <= 0 || currentHealth <= 0)
             return;
@@ -72,6 +74,10 @@ public class HealthComponent : MonoBehaviour
         Debug.Log($"[HealthComponent] {name} TakeDamage: amount={amount}, before={before}");
 
         currentHealth -= amount;
+
+        // 👇 AGREGA ESTO
+        onDamage?.Invoke();
+        OnDamaged?.Invoke(amount);
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
@@ -95,6 +101,8 @@ public class HealthComponent : MonoBehaviour
 
         Debug.Log($"[HealthComponent] {name} after damage: current={currentHealth}/{maxHealth}");
 
+        lastDamageSource = damageSource;
+
         if (currentHealth <= 0)
         {
             Die();
@@ -104,6 +112,7 @@ public class HealthComponent : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
         try { OnHealed?.Invoke(amount); } catch { }
     }
 
@@ -112,16 +121,18 @@ public class HealthComponent : MonoBehaviour
     /// mirrors the behaviour previously provided by PlayerHealth.RestoreFullHealth().
     /// </summary>
     public void RestoreFullHealth()
-    {
-        currentHealth = maxHealth;
-        // Reactivate colliders if any
-        Collider2D[] cols = GetComponents<Collider2D>();
-        foreach (var c in cols) if (c != null) c.enabled = true;
+{
+    currentHealth = maxHealth;
 
-        // Re-enable mono behaviours (best-effort)
-        MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
-        foreach (var s in scripts) if (s != null) s.enabled = true;
-    }
+    OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+    Collider2D[] cols = GetComponents<Collider2D>();
+    foreach (var c in cols) if (c != null) c.enabled = true;
+
+    MonoBehaviour[] scripts = GetComponents<MonoBehaviour>();
+    foreach (var s in scripts) if (s != null) s.enabled = true;
+}
+
 
     /// <summary>
     /// Set health to a specific value (used by LevelManager or debug tools)
@@ -138,10 +149,15 @@ public class HealthComponent : MonoBehaviour
         RestoreFullHealth();
     }
 
-    private void Die()
-    {
-        onDeath?.Invoke(); // Dispara evento de muerte
-        OnHealthChanged?.Invoke(-1, maxHealth);
-        gameObject.SetActive(false);
-    }
+
+   private void Die()
+{
+
+    onDeath?.Invoke();
+    gameObject.SetActive(false);
+    
 }
+
+}
+
+

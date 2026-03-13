@@ -13,16 +13,15 @@ public class PlayerRestartableObject : RestartableObject
 
     public override void OnLevelRestart()
     {
-    // Llamamos primero al comportamiento original
-    base.OnLevelRestart();
+      // Asegurar que el jugador esté activo
+    if (!gameObject.activeSelf)
+        gameObject.SetActive(true);
 
-    // Luego aplicas la lógica especial del jugador
+    base.OnLevelRestart();
 
     var feedback = GetComponent<DamageFeedback>();
     if (feedback != null)
-    {
-    feedback.ResetVisual();
-    }
+        feedback.ResetVisual();
 
     if (storePosition)
         transform.position = savedPosition;
@@ -37,21 +36,18 @@ public class PlayerRestartableObject : RestartableObject
     }
 
     var movimiento = GetComponent<Movimiento2D>();
-if (movimiento != null)
-{
-    movimiento.mirandoDrecha = true;
+    if (movimiento != null)
+    {
+        movimiento.mirandoDrecha = true;
 
-    // Si usas localScale para el flip
-    Vector3 scale = transform.localScale;
-    scale.x = Mathf.Abs(scale.x);
-    transform.localScale = scale;
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x);
+        transform.localScale = scale;
 
-    // Si usas SpriteRenderer.flipX (mejor opción)
-    var sr = GetComponent<SpriteRenderer>();
-    if (sr != null)
-        sr.flipX = false;
-}
-
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+            sr.flipX = false;
+    }
     OnCustomRestart();
     }
 

@@ -78,9 +78,13 @@ public class LevelManager : MonoBehaviour
         // Buscar todos los objetos que implementan IRestartable
         FindRestartableObjects();
 
-        playerHealth.onDeath += () => {
-            RestartLevel();
-        };
+ if (playerHealth == null)
+        playerHealth = FindObjectOfType<HealthComponent>();
+
+    if (playerHealth != null)
+    {
+        playerHealth.onDeath += RestartLevel;
+    }
     }
     
     // Método para encontrar todos los objetos que implementan IRestartable

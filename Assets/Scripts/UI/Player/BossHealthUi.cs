@@ -1,35 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BossHealthUi : MonoBehaviour
+public class BossHealthUI : MonoBehaviour
 {
-    [SerializeField] private HealthComponent BossHealth;
-    [SerializeField] private Image healthBarFill;
+    [Header("Referencias")]
     [SerializeField] private BossPhase1 boss;
-    [SerializeField] private GameObject rootUI; // panel completo
+    [SerializeField] private Image healthBarFill;
+    [SerializeField] private GameObject rootUI;
 
-    private void OnEnable()
-    {
-        BossHealth.OnHealthChanged += UpdateHealthBar;
-    }
+    [Header("Animación barra")]
+    [SerializeField] private float smoothSpeed = 5f;
 
-    private void OnDisable()
-    {
-        BossHealth.OnHealthChanged -= UpdateHealthBar;
-    }
+    private HealthComponent bossHealth;
+    private float targetFill;
 
-    private void Update()
+    void Start()
+{
+    bossHealth = boss.GetComponent<HealthComponent>();
+
+    int current = bossHealth.GetCurrentHealth();
+    int max = bossHealth.GetMaxHealth();
+
+    targetFill = (float)current / max;
+    healthBarFill.fillAmount = targetFill;
+
+    bossHealth.OnHealthChanged -= OnBossHealthChanged; // evitar duplicados
+    bossHealth.OnHealthChanged += OnBossHealthChanged;
+}
+
+    void Update()
     {
-        if (boss == null || rootUI == null) return;
+        if (boss == null)
+            return;
 
         rootUI.SetActive(boss.IsPlayerDetected());
+
+         float before = healthBarFill.fillAmount;   // ← guardar valor anterior
+
+        healthBarFill.fillAmount = Mathf.Lerp(
+            healthBarFill.fillAmount,
+             Mathf.Clamp01(targetFill),
+            Time.deltaTime * smoothSpeed
+        );
+        if (before != healthBarFill.fillAmount);
     }
 
-    private void UpdateHealthBar(float current,float max)
+    void OnBossHealthChanged(HealthComponent source, float current, float max)
+{
+    Debug.Log($"[BossUI EVENT] {source.name} {current}/{max}");
+    if (source != bossHealth)
+        return;
+
+    targetFill = (float)current / max;
+}
+
+    void OnDestroy()
     {
-        float ratio = current / max;
-        healthBarFill.fillAmount = ratio;
+        if (bossHealth != null)
+            bossHealth.OnHealthChanged -= OnBossHealthChanged;
     }
 }

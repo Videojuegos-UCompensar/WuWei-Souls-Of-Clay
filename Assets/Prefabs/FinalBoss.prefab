@@ -587,7 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enableSpecialAttack: 0
-  dashForce: 25
+  dashForce: 7
   dashDuration: 0.3
   windSlashPrefab: {fileID: 1488439693287202358}
   slashSpawnPoint: {fileID: 8911027572999696211}

@@ -67,12 +67,6 @@ public class EnemyAI : MonoBehaviour
         currentState = State.Patrolling;
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
 
-        // Verificar que los componentes necesarios estén configurados
-        if (leftBoundary == null || rightBoundary == null)
-        {
-            Debug.LogError("Los límites de patrulla no están configurados en " + gameObject.name);
-        }
-
         if (player == null)
         {
             Debug.LogWarning("No se encontró el jugador con tag 'Player'");

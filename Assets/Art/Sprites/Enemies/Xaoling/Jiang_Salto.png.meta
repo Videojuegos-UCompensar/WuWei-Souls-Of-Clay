@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1b98f33fb03d20f4291b10e1ac615b5c
+guid: 95002226862673f42bca0dcd0ddcc35f
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 45
+  spritePixelsToUnits: 48
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -136,64 +136,127 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: afk_ew_01_0
+      name: Jiang_Salto_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0eff24b9bd8db7a428ff8bf3e7255494
-      internalID: -507784281
+      spriteID: 33b402f3a2a782343a8e7ec0603585d6
+      internalID: -76351244
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: afk_ew_01_1
+      name: Jiang_Salto_1
       rect:
         serializedVersion: 2
         x: 48
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e37224481a63e8a4184f60fd08f93abd
-      internalID: -1203325038
+      spriteID: 9bdc645270b5fe341a0d824e16268b9f
+      internalID: 1928660990
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: afk_ew_01_2
+      name: Jiang_Salto_2
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8a5190f4844e45e4880fb73720859690
-      internalID: -330345046
+      spriteID: 4e4e04688a176514180619c1f446d02e
+      internalID: -1931643930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Jiang_Salto_3
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 57b422c203501ab47880ba77067c501c
+      internalID: 426463394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Jiang_Salto_4
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ba6626fee4c9bd141af1c798bc05ba61
+      internalID: 399318679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Jiang_Salto_5
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0b624c541d98b2b4eaf483bee0ae15c8
+      internalID: 225141289
       vertices: []
       indices: 
       edges: []
@@ -209,9 +272,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      afk_ew_01_0: -507784281
-      afk_ew_01_1: -1203325038
-      afk_ew_01_2: -330345046
+      Jiang_Salto_0: -76351244
+      Jiang_Salto_1: 1928660990
+      Jiang_Salto_2: -1931643930
+      Jiang_Salto_3: 426463394
+      Jiang_Salto_4: 399318679
+      Jiang_Salto_5: 225141289
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

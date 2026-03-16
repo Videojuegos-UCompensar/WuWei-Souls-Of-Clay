@@ -352,7 +352,7 @@ GameObject:
   m_Layer: 7
   m_Name: FinalBoss
   m_TagString: Enemy
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -587,7 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enableSpecialAttack: 0
-  dashForce: 25
+  dashForce: 7
   dashDuration: 0.3
   windSlashPrefab: {fileID: 1488439693287202358}
   slashSpawnPoint: {fileID: 8911027572999696211}
@@ -652,10 +652,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8ff705e6c07ce42a221867c7a8d2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BossHealth: {fileID: 753324695360558694}
-  healthBarFill: {fileID: 0}
   boss: {fileID: 2023374753707316757}
+  healthBarFill: {fileID: 0}
   rootUI: {fileID: 0}
+  smoothSpeed: 5
 --- !u!1 &8765965003545972965
 GameObject:
   m_ObjectHideFlags: 0

@@ -477,7 +477,7 @@ MonoBehaviour:
   storeRotation: 1
   storeScale: 1
   storeVelocity: 1
-  storeActive: 1
+  storeActive: 0
   preserveRigidbody: 1
   preserveColliders: 1
   preserveScripts: 1
@@ -495,6 +495,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth: {fileID: 1311900212353701661}
   healthBarFill: {fileID: 0}
+  animationTime: 1
 --- !u!114 &8864292740220163521
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,8 +24,10 @@ public class EjecutarCinematica : MonoBehaviour
 
     private void Start()
 {
+    
     playableDirector.stopped += OnCinematicaTerminada;
-    bossHealth.OnHealthChanged += CheckHealth;
+     if (bossHealth != null)
+        bossHealth.OnHealthChanged += CheckHealth;
 
     if (playerHealth != null)
         playerHealth.onDeath += OnPlayerDeath;
@@ -61,7 +63,7 @@ public class EjecutarCinematica : MonoBehaviour
 
 
 
-    private void CheckHealth(float current, float max)
+    private void CheckHealth(HealthComponent source, float current, float max)
     {
         if (cinematicaEjecutada) return;
 
@@ -90,13 +92,25 @@ private void OnPlayerDeath()
 
     cinematicaEjecutada = true;
 
-     if (bossAI != null)
+    if (bossAI != null)
     {
-        bossAI.StopBoss();    // 🔥 mata especiales en curso
-        bossAI.enabled = false;         // desactiva IA
+        bossAI.StopBoss();
+        bossAI.enabled = false;
     }
 
-    // Colocar al jugador en la posición exacta
+    // 🔥 RESTABLECER JUGADOR
+    if (playerHealth != null)
+    {
+        playerHealth.RestoreFullHealth();
+        playerHealth.gameObject.SetActive(true);
+    }
+
+    if (playerMovement != null)
+    {
+        playerMovement.enabled = false; // bloquear movimiento durante la cinemática
+    }
+
+    // mover jugador a posición
     if (playerTransform != null)
     {
         playerTransform.position = new Vector3(396.52f, 11.44f, playerTransform.position.z);
@@ -104,10 +118,6 @@ private void OnPlayerDeath()
 
     playableDirector.Play();
 }
-
-
-
-
 
     void OnCinematicaTerminada(PlayableDirector director)
     {

@@ -12,17 +12,15 @@ public class PlayerRestartableObject : RestartableObject
     }
 
     public override void OnLevelRestart()
-    {
-    // Llamamos primero al comportamiento original
-    base.OnLevelRestart();
+{
+    base.OnLevelRestart(); // 🔥 primero el comportamiento base
 
-    // Luego aplicas la lógica especial del jugador
+    if (!gameObject.activeSelf)
+        gameObject.SetActive(true);
 
     var feedback = GetComponent<DamageFeedback>();
     if (feedback != null)
-    {
-    feedback.ResetVisual();
-    }
+        feedback.ResetVisual();
 
     if (storePosition)
         transform.position = savedPosition;
@@ -37,23 +35,21 @@ public class PlayerRestartableObject : RestartableObject
     }
 
     var movimiento = GetComponent<Movimiento2D>();
-if (movimiento != null)
-{
-    movimiento.mirandoDrecha = true;
+    if (movimiento != null)
+    {
+        movimiento.mirandoDrecha = true;
 
-    // Si usas localScale para el flip
-    Vector3 scale = transform.localScale;
-    scale.x = Mathf.Abs(scale.x);
-    transform.localScale = scale;
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x);
+        transform.localScale = scale;
 
-    // Si usas SpriteRenderer.flipX (mejor opción)
-    var sr = GetComponent<SpriteRenderer>();
-    if (sr != null)
-        sr.flipX = false;
-}
+        var sr = GetComponent<SpriteRenderer>();
+        if (sr != null)
+            sr.flipX = false;
+    }
 
     OnCustomRestart();
-    }
+}
 
     // Permite que un checkpoint actualice la posición guardada
     public void UpdateCheckpoint(Vector3 newPos)

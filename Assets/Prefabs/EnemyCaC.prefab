@@ -54,7 +54,7 @@ BoxCollider2D:
   m_Material: {fileID: 6200000, guid: 38f7d9a9ae5460d4eb2e253416f1736d, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 895
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 128
@@ -74,10 +74,10 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.008353949, y: 0.023971677}
+  m_Offset: {x: 0.008353949, y: -0.029691339}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.55, y: 0.41}
+    pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -85,7 +85,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.41748285, y: 0.76486135}
+  m_Size: {x: 0.41748285, y: 0.8721874}
   m_EdgeRadius: 0
 --- !u!50 &8372802371266885366
 Rigidbody2D:
@@ -103,7 +103,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 38f7d9a9ae5460d4eb2e253416f1736d, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
   groundCheck: {fileID: 3449999566122505457}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 264
+    m_Bits: 895
   groundCheckRadius: 0.05
   leftBoundary: {fileID: 0}
   rightBoundary: {fileID: 0}
@@ -195,7 +195,7 @@ SpriteRenderer:
   m_SortingLayerID: 1786149629
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1740208167, guid: a73cd776dc8c5cd43b68dcfa1dfa5365, type: 3}
+  m_Sprite: {fileID: -76351244, guid: 95002226862673f42bca0dcd0ddcc35f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -361,7 +361,7 @@ Transform:
   m_GameObject: {fileID: 9029770048721687548}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.028, y: -0.339, z: -0.05147448}
+  m_LocalPosition: {x: 0.028, y: -0.375, z: -0.05147448}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

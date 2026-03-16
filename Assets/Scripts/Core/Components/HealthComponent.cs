@@ -23,7 +23,7 @@ public class HealthComponent : MonoBehaviour
     // camera, we'll call it. We don't add any new files here.
     private CameraShake cameraShake;
 
-    public Action<float, float> OnHealthChanged;
+    public Action<HealthComponent, float, float> OnHealthChanged;
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class HealthComponent : MonoBehaviour
 
     private void Start()
     {
-       OnHealthChanged?.Invoke(currentHealth, maxHealth);
+       OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
     }
 
     // Optional invincibility support (off by default). Player adapter can
@@ -70,16 +70,19 @@ public class HealthComponent : MonoBehaviour
         if (amount <= 0 || currentHealth <= 0)
             return;
 
+        if (damageSource == gameObject)
+            return;
+
         int before = currentHealth;
         Debug.Log($"[HealthComponent] {name} TakeDamage: amount={amount}, before={before}");
 
         currentHealth -= amount;
 
-        // 👇 AGREGA ESTO
         onDamage?.Invoke();
         OnDamaged?.Invoke(amount);
 
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
+        Debug.Log($"[vida actual] {currentHealth}");
 
         // Trigger camera shake if available (use project's implementation)
         try
@@ -112,7 +115,7 @@ public class HealthComponent : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
-        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
         try { OnHealed?.Invoke(amount); } catch { }
     }
 
@@ -122,9 +125,14 @@ public class HealthComponent : MonoBehaviour
     /// </summary>
     public void RestoreFullHealth()
 {
+    lastDamageSource = null;
     currentHealth = maxHealth;
 
-    OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    // 🔥 Reactivar objeto si estaba muerto
+    if (!gameObject.activeSelf)
+        gameObject.SetActive(true);
+
+    OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
 
     Collider2D[] cols = GetComponents<Collider2D>();
     foreach (var c in cols) if (c != null) c.enabled = true;
@@ -152,10 +160,20 @@ public class HealthComponent : MonoBehaviour
 
    private void Die()
 {
-
+    Debug.Log("Murió: " + name);
     onDeath?.Invoke();
     gameObject.SetActive(false);
     
+}
+
+public int GetCurrentHealth()
+{
+    return currentHealth;
+}
+
+public int GetMaxHealth()
+{
+    return maxHealth;
 }
 
 }

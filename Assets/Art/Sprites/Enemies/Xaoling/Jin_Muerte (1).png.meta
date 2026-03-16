@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a73cd776dc8c5cd43b68dcfa1dfa5365
+guid: 0c4efb531d2492c43825d3e1c3aaa6af
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -93,89 +93,170 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: yanzoth Caminando_0
+      name: Jin_Muerte (1)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.55, y: 0.41}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 46006aba9fdfef9488826db1aaac4cb8
-      internalID: 1740208167
+      spriteID: b14701fbf4da6f44ca3cf1ef52020637
+      internalID: -512249111
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: yanzoth Caminando_1
+      name: Jin_Muerte (1)_1
       rect:
         serializedVersion: 2
         x: 48
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.55, y: 0.41}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d5dec35362cf5044b9d88930c3312b7
-      internalID: 1448862570
+      spriteID: 8d6f47a7369ef2a4aacc094992b0285b
+      internalID: 562692056
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: yanzoth Caminando_2
+      name: Jin_Muerte (1)_2
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.55, y: 0.41}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d49964aa4bd77e14995e98452a35afcb
-      internalID: 1186196482
+      spriteID: bd56476a7dff11c4699656bfdf32a793
+      internalID: 86124763
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: yanzoth Caminando_3
+      name: Jin_Muerte (1)_3
       rect:
         serializedVersion: 2
         x: 144
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.55, y: 0.41}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f0d6767faede297499ff441aedc7067e
-      internalID: -120465982
+      spriteID: 7e4575b1776f6374ab0e4d8a3c7f0f54
+      internalID: -1953358611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Jin_Muerte (1)_4
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 86094a98301a30b4ea7dff4777d288f1
+      internalID: -1921958246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Jin_Muerte (1)_5
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3bed547e41e1bb74198f7b148ce9ded2
+      internalID: 320413942
       vertices: []
       indices: 
       edges: []
@@ -191,10 +272,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      yanzoth Caminando_0: 1740208167
-      yanzoth Caminando_1: 1448862570
-      yanzoth Caminando_2: 1186196482
-      yanzoth Caminando_3: -120465982
+      Jin_Muerte (1)_0: -512249111
+      Jin_Muerte (1)_1: 562692056
+      Jin_Muerte (1)_2: 86124763
+      Jin_Muerte (1)_3: -1953358611
+      Jin_Muerte (1)_4: -1921958246
+      Jin_Muerte (1)_5: 320413942
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

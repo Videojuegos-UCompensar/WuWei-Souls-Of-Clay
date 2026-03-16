@@ -7,21 +7,48 @@ public class PlayerHealthUi : MonoBehaviour
 {
     [SerializeField] private HealthComponent playerHealth;
     [SerializeField] private Image healthBarFill;
+
+    [SerializeField] private float animationTime = 1f;
+
+    private Coroutine animRoutine;
+
     private void OnEnable()
     {
-        playerHealth.OnHealthChanged += UpdateHealthBar;
+        if (playerHealth != null)
+            playerHealth.OnHealthChanged += UpdateHealthBar;
     }
 
     private void OnDisable()
     {
-        playerHealth.OnHealthChanged -= UpdateHealthBar;
+        if (playerHealth != null)
+            playerHealth.OnHealthChanged -= UpdateHealthBar;
     }
 
-    private void UpdateHealthBar(float current,float max)
+    private void UpdateHealthBar(HealthComponent source, float current, float max)
     {
-        float ratio = current / max;
-        healthBarFill.fillAmount = ratio;
+        float ratio = Mathf.Clamp01(current / max);
 
-        if (ratio < 0f) healthBarFill.fillAmount = 1f;
+        if (ratio < 0f) ratio = 1f;
+
+        // detener animación previa si existe
+        if (animRoutine != null)
+            StopCoroutine(animRoutine);
+
+        animRoutine = StartCoroutine(AnimateBar(ratio));
+    }
+
+    private IEnumerator AnimateBar(float target)
+    {
+        float start = healthBarFill.fillAmount;
+        float t = 0f;
+
+        while (t < animationTime)
+        {
+            t += Time.deltaTime;
+            healthBarFill.fillAmount = Mathf.Lerp(start, target, t / animationTime);
+            yield return null;
+        }
+
+        healthBarFill.fillAmount = target;
     }
 }

@@ -110,24 +110,27 @@ private void FacePlayer()
 
 
     private void FixedUpdate()
+{
+    if (isPerformingSpecial)
+        return;
+
+    isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer);
+
+    switch (currentState)
     {
-        isGrounded = Physics2D.Raycast(transform.position, Vector2.down, 1.1f, groundLayer);
+        case BossState.Idle:
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            break;
 
-        switch (currentState)
-        {
-            case BossState.Idle:
-                rb.velocity = new Vector2(0, rb.velocity.y);
-                break;
+        case BossState.Chase:
+            MoveTowardsPlayer();
+            break;
 
-            case BossState.Chase:
-                MoveTowardsPlayer();
-                break;
-
-            case BossState.Attack:
-                rb.velocity = new Vector2(0, rb.velocity.y);
-                break;
-        }
+        case BossState.Attack:
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            break;
     }
+}
 
     void ChangeState(BossState newState)
 {
@@ -143,7 +146,7 @@ private void FacePlayer()
     }
 }
 
-private void CheckPhase(float current, float max)
+private void CheckPhase(HealthComponent source, float current, float max)
 {
     float percentage = current / max;
 
@@ -194,7 +197,7 @@ private IEnumerator PhaseTransition()
         }
     }
 
-    void TryAttack()
+void TryAttack()
 {
     if (Time.time < lastAttackTime + attackCooldown) return;
 
@@ -202,21 +205,19 @@ private IEnumerator PhaseTransition()
 
     if (enableSpecialAttack)
     {
-        int random = Random.Range(0, 3);
+        float roll = Random.value;
 
-        switch (random)
+        if (roll < 0.4f)
         {
-            case 0:
-                StartCoroutine(DashAttack());
-                break;
-
-            case 1:
-                StartCoroutine(VerticalSlashRoutine());
-                break;
-
-            case 2:
-                StartCoroutine(SummonOrbsRoutine());
-                break;
+            StartCoroutine(DashAttack());          // 40%
+        }
+        else if (roll < 0.8f)
+        {
+            StartCoroutine(VerticalSlashRoutine()); // 40%
+        }
+        else
+        {
+            StartCoroutine(SummonOrbsRoutine());    // 20%
         }
     }
     else
@@ -229,6 +230,8 @@ private IEnumerator PhaseTransition()
 private IEnumerator DashAttack()
 {
     isPerformingSpecial = true;
+
+    ChangeState(BossState.Attack);
 
     animator.SetTrigger("Dash");
 
@@ -243,8 +246,6 @@ private IEnumerator DashAttack()
     rb.velocity = Vector2.zero;
 
     isPerformingSpecial = false;
-
-    attackRange = originalAttackRange;
 }
 
 public void StopBoss()
@@ -282,7 +283,7 @@ private IEnumerator VerticalSlashRoutine()
 
     animator.SetTrigger("VerticalSlash");
 
-    yield return new WaitForSeconds(0.2f);
+    yield return new WaitForSeconds(0.5f);
 
     SpawnWindSlash();
 
@@ -320,7 +321,7 @@ private IEnumerator SummonOrbsRoutine()
 
     animator.SetTrigger("Summon");
 
-    yield return new WaitForSeconds(0.3f);
+    yield return new WaitForSeconds(0.5f);
 
     for (int i = 0; i < orbCount; i++)
     {

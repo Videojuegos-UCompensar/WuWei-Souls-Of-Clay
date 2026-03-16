@@ -283,7 +283,7 @@ private IEnumerator VerticalSlashRoutine()
 
     animator.SetTrigger("VerticalSlash");
 
-    yield return new WaitForSeconds(0.2f);
+    yield return new WaitForSeconds(0.5f);
 
     SpawnWindSlash();
 
@@ -321,7 +321,7 @@ private IEnumerator SummonOrbsRoutine()
 
     animator.SetTrigger("Summon");
 
-    yield return new WaitForSeconds(0.3f);
+    yield return new WaitForSeconds(0.5f);
 
     for (int i = 0; i < orbCount; i++)
     {

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d1dddc688b2bf3c41b685f3ec67d70a0
+guid: 2584a4cc026323349a3b404a9a52e295
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -98,7 +98,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -111,7 +111,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -124,7 +124,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -136,7 +136,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Sprite Saltando_0
+      name: AtaqueEspada_0
       rect:
         serializedVersion: 2
         x: 0
@@ -150,14 +150,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b7cdfc830eaebac46b4975652ac3cdeb
-      internalID: -128974205
+      spriteID: 81052e1509d7516408a2d740dd5cb8ad
+      internalID: 869932981
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Sprite Saltando_1
+      name: AtaqueEspada_1
       rect:
         serializedVersion: 2
         x: 48
@@ -171,14 +171,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ac67506ab68c93b448d86bcfc078330c
-      internalID: -1895216559
+      spriteID: 400aede818822e1499b9d26076045739
+      internalID: 114446191
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Sprite Saltando_2
+      name: AtaqueEspada_2
       rect:
         serializedVersion: 2
         x: 96
@@ -192,14 +192,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 601d8db9f918c9b418cbf0dc4a862879
-      internalID: 351891528
+      spriteID: b140e83616bca734da20b93e27cab237
+      internalID: -167464067
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Sprite Saltando_3
+      name: AtaqueEspada_3
       rect:
         serializedVersion: 2
         x: 144
@@ -213,50 +213,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e38a1e9358cd21a4cba19470fa07335f
-      internalID: 1800224784
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sprite Saltando_4
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6563cf954fd5fdc42876ba70db91549f
-      internalID: 304417309
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Sprite Saltando_5
-      rect:
-        serializedVersion: 2
-        x: 240
-        y: 0
-        width: 48
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e0348a4ec3eb7404cbcf1b396d95bb33
-      internalID: -2051482768
+      spriteID: 02f23241b05fa684a8972d6dd987b9a2
+      internalID: -1240679812
       vertices: []
       indices: 
       edges: []
@@ -272,12 +230,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Sprite Saltando_0: -128974205
-      Sprite Saltando_1: -1895216559
-      Sprite Saltando_2: 351891528
-      Sprite Saltando_3: 1800224784
-      Sprite Saltando_4: 304417309
-      Sprite Saltando_5: -2051482768
+      AtaqueEspada_0: 869932981
+      AtaqueEspada_1: 114446191
+      AtaqueEspada_2: -167464067
+      AtaqueEspada_3: -1240679812
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

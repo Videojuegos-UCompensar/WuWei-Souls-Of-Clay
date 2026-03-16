@@ -12,12 +12,11 @@ public class PlayerRestartableObject : RestartableObject
     }
 
     public override void OnLevelRestart()
-    {
-      // Asegurar que el jugador esté activo
+{
+    base.OnLevelRestart(); // 🔥 primero el comportamiento base
+
     if (!gameObject.activeSelf)
         gameObject.SetActive(true);
-
-    base.OnLevelRestart();
 
     var feedback = GetComponent<DamageFeedback>();
     if (feedback != null)
@@ -48,8 +47,9 @@ public class PlayerRestartableObject : RestartableObject
         if (sr != null)
             sr.flipX = false;
     }
+
     OnCustomRestart();
-    }
+}
 
     // Permite que un checkpoint actualice la posición guardada
     public void UpdateCheckpoint(Vector3 newPos)

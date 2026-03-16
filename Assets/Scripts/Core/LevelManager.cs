@@ -51,6 +51,7 @@ public class LevelManager : MonoBehaviour
         {
             audioSource = gameObject.AddComponent<AudioSource>();
         }
+        
     }
 
     private void Start()
@@ -77,36 +78,50 @@ public class LevelManager : MonoBehaviour
         
         // Buscar todos los objetos que implementan IRestartable
         FindRestartableObjects();
+    }
 
- if (playerHealth == null)
-        playerHealth = FindObjectOfType<HealthComponent>();
+    void OnEnable()
+{
+    if (player == null)
+        player = GameObject.FindGameObjectWithTag("Player");
+
+    if (player != null)
+        playerHealth = player.GetComponent<HealthComponent>();
 
     if (playerHealth != null)
     {
         playerHealth.onDeath += RestartLevel;
+        Debug.Log("LevelManager suscrito a muerte del jugador");
     }
-    }
+}
+
+void OnDisable()
+{
+    if (playerHealth != null)
+        playerHealth.onDeath -= RestartLevel;
+}
     
     // Método para encontrar todos los objetos que implementan IRestartable
     public void FindRestartableObjects()
+{
+    restartableObjects.Clear();
+
+    MonoBehaviour[] scripts = FindObjectsOfType<MonoBehaviour>(true); // 🔥 incluye objetos desactivados
+
+    foreach (MonoBehaviour script in scripts)
     {
-        restartableObjects.Clear();
-        
-        // Encontrar todos los MonoBehaviours que implementan IRestartable
-        MonoBehaviour[] scripts = FindObjectsOfType<MonoBehaviour>();
-        foreach (MonoBehaviour script in scripts)
+        if (script is IRestartable restartable)
         {
-            if (script is IRestartable restartable)
-            {
-                restartableObjects.Add(restartable);
-                Debug.Log($"Objeto restartable encontrado: {script.gameObject.name}");
-            }
+            restartableObjects.Add(restartable);
+            Debug.Log($"Objeto restartable encontrado: {script.gameObject.name}");
         }
     }
+}
     
     // Método principal para reiniciar el nivel
     public void RestartLevel()
     {
+        Debug.Log("RestartLevel ejecutado");
         StartCoroutine(RestartLevelSequence());
     }
     
@@ -125,8 +140,10 @@ public class LevelManager : MonoBehaviour
             Instantiate(restartEffectPrefab, player != null ? player.transform.position : Vector3.zero, Quaternion.identity);
         }
         
+        Debug.Log("Coroutine iniciada");
         // Pausar brevemente antes de reiniciar
-        yield return new WaitForSeconds(restartDelay);
+        yield return new WaitForSecondsRealtime(restartDelay);
+        Debug.Log("Coroutine continuó");
         
         // Si estamos usando la misma escena para reiniciar
         if (resetObjectsOnRestart)
@@ -144,6 +161,11 @@ public class LevelManager : MonoBehaviour
     // Método para reiniciar todos los objetos sin recargar la escena
     public void ResetLevel()
     {
+        Debug.Log("invocando restart");
+        if (player == null)
+        {
+        player = GameObject.FindGameObjectWithTag("Player");
+        }
         // Reiniciar el jugador
         if (player != null)
         {
@@ -178,7 +200,7 @@ public class LevelManager : MonoBehaviour
             HealthComponent playerHealth = player.GetComponent<HealthComponent>();
             if (playerHealth != null)
             {
-                playerHealth.RestoreFullHealth();
+                playerHealth.OnLevelRestart();
             }
             
             // Reiniciar componentes del jugador
@@ -264,4 +286,4 @@ public class LevelManager : MonoBehaviour
 public interface IRestartable
 {
     void OnLevelRestart();
-}
+} 

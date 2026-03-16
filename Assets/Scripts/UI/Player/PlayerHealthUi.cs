@@ -8,7 +8,7 @@ public class PlayerHealthUi : MonoBehaviour
     [SerializeField] private HealthComponent playerHealth;
     [SerializeField] private Image healthBarFill;
 
-    [SerializeField] private float animationTime = 0.2f;
+    [SerializeField] private float animationTime = 1f;
 
     private Coroutine animRoutine;
 

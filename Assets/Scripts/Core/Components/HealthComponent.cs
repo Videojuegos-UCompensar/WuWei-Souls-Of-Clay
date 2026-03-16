@@ -82,6 +82,7 @@ public class HealthComponent : MonoBehaviour
         OnDamaged?.Invoke(amount);
 
         OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
+        Debug.Log($"[vida actual] {currentHealth}");
 
         // Trigger camera shake if available (use project's implementation)
         try
@@ -124,7 +125,12 @@ public class HealthComponent : MonoBehaviour
     /// </summary>
     public void RestoreFullHealth()
 {
+    lastDamageSource = null;
     currentHealth = maxHealth;
+
+    // 🔥 Reactivar objeto si estaba muerto
+    if (!gameObject.activeSelf)
+        gameObject.SetActive(true);
 
     OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
 
@@ -154,7 +160,7 @@ public class HealthComponent : MonoBehaviour
 
    private void Die()
 {
-
+    Debug.Log("Murió: " + name);
     onDeath?.Invoke();
     gameObject.SetActive(false);
     

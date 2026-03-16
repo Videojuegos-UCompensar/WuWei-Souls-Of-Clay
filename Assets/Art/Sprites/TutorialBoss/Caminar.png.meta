@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 93eb2391237e05549b748c97548e79dd
+guid: 0f8f663df2e2f7043a32dda935e9567d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 45
+  spritePixelsToUnits: 48
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -136,85 +136,127 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: atk_ew_01_0
+      name: Caminar_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3709c123c7c8ef044a0fbd880db9284d
-      internalID: 1709794015
+      spriteID: 689efb8edc27b28429a4f9931ad121f5
+      internalID: -1007138928
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: atk_ew_01_1
+      name: Caminar_1
       rect:
         serializedVersion: 2
         x: 48
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d2afd21572b2f134cb505689c5eaaa77
-      internalID: -1264709122
+      spriteID: fcc15ef0e840d4747adceb36b1bfc301
+      internalID: -693095251
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: atk_ew_01_2
+      name: Caminar_2
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f2a098cc52e749c4ea06e219bc6649b7
-      internalID: -319805973
+      spriteID: c8735d45578705e4e94b3571c4a5614e
+      internalID: -1523614717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: atk_ew_01_3
+      name: Caminar_3
       rect:
         serializedVersion: 2
         x: 144
         y: 0
         width: 48
         height: 48
-      alignment: 9
-      pivot: {x: 0.5, y: 0.465}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 515e3d0fea19c564a8249e1610222059
-      internalID: 200854884
+      spriteID: 3299e70518369a149aeec7bc9dbb7fdf
+      internalID: -1344997342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Caminar_4
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5d6bb1df14301e04eab75db9c96f3703
+      internalID: 749672954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Caminar_5
+      rect:
+        serializedVersion: 2
+        x: 240
+        y: 0
+        width: 48
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 239b86ba27444384896730ec61fb3376
+      internalID: 1757140758
       vertices: []
       indices: 
       edges: []
@@ -230,10 +272,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      atk_ew_01_0: 1709794015
-      atk_ew_01_1: -1264709122
-      atk_ew_01_2: -319805973
-      atk_ew_01_3: 200854884
+      Caminar_0: -1007138928
+      Caminar_1: -693095251
+      Caminar_2: -1523614717
+      Caminar_3: -1344997342
+      Caminar_4: 749672954
+      Caminar_5: 1757140758
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

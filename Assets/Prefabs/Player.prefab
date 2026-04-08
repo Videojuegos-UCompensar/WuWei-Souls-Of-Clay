@@ -413,6 +413,9 @@ MonoBehaviour:
   tiempoDash: 0.2
   tiempoEntreDashes: 1
   animator: {fileID: 7884915907545452479}
+  particulaCorrer: {fileID: 0}
+  particulaCorriendo: {fileID: 0}
+  particulaSaltar: {fileID: 0}
 --- !u!114 &7891242794860024214
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -452,9 +455,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 10
+  superHit: {fileID: 7144179395325777070, guid: 642999f4fcddf2b46b9da32a246dddcc, type: 3}
   onDamage:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: HealthComponent, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []

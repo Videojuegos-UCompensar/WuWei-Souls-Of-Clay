@@ -11,6 +11,9 @@ public class HealthComponent : MonoBehaviour
 
     [Header("Configuración de Vida")]
     [SerializeField] private int maxHealth = 100;
+
+    [SerializeField] private ParticleSystem superHit;
+
     private int currentHealth;
 
     [Header("Eventos")]
@@ -25,6 +28,7 @@ public class HealthComponent : MonoBehaviour
 
     public Action<HealthComponent, float, float> OnHealthChanged;
 
+
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -33,12 +37,7 @@ public class HealthComponent : MonoBehaviour
         {
             cameraShake = Camera.main.GetComponent<CameraShake>();
         }
-        // Debug: mostrar si encontramos la cámara principal y el componente CameraShake
-        try
-        {
-            Debug.Log($"[HealthComponent] Awake on {name}: Camera.main={(Camera.main!=null?Camera.main.name:"null")}, CameraShake={(cameraShake!=null?"found":"null")}");
-        }
-        catch { }
+        // ...
     }
 
     private void Start()
@@ -73,8 +72,7 @@ public class HealthComponent : MonoBehaviour
         if (damageSource == gameObject)
             return;
 
-        int before = currentHealth;
-        Debug.Log($"[HealthComponent] {name} TakeDamage: amount={amount}, before={before}");
+        // ...
 
         currentHealth -= amount;
 
@@ -82,27 +80,18 @@ public class HealthComponent : MonoBehaviour
         OnDamaged?.Invoke(amount);
 
         OnHealthChanged?.Invoke(this, currentHealth, maxHealth);
-        Debug.Log($"[vida actual] {currentHealth}");
 
         // Trigger camera shake if available (use project's implementation)
         try
         {
             if (cameraShake != null)
             {
-                Debug.Log($"[HealthComponent] {name} invoking CameraShake.Shake()");
                 cameraShake?.Shake(0.15f);
             }
-            else
-            {
-                Debug.Log($"[HealthComponent] {name} CameraShake not found (no shake)");
-            }
         }
-        catch (System.Exception ex)
-        {
-            Debug.LogWarning($"[HealthComponent] {name} exception invoking CameraShake: {ex.Message}");
-        }
+        catch { }
 
-        Debug.Log($"[HealthComponent] {name} after damage: current={currentHealth}/{maxHealth}");
+        // ...
 
         lastDamageSource = damageSource;
 
@@ -128,7 +117,6 @@ public class HealthComponent : MonoBehaviour
     lastDamageSource = null;
     currentHealth = maxHealth;
 
-    // 🔥 Reactivar objeto si estaba muerto
     if (!gameObject.activeSelf)
         gameObject.SetActive(true);
 
@@ -158,12 +146,21 @@ public class HealthComponent : MonoBehaviour
     }
 
 
-   private void Die()
+private void Die()
 {
-    Debug.Log("Murió: " + name);
+
+    // Solo manipula si la partícula es una instancia en la escena (no un prefab asset)
+    if (superHit != null && superHit.gameObject.scene.IsValid())
+    {
+        superHit.transform.SetParent(null); // Saca la partícula del objeto
+        superHit.gameObject.SetActive(true); // Asegura que esté activa
+        superHit.Play();
+        Destroy(superHit.gameObject, superHit.main.duration); // Destruye la partícula después de reproducirse
+    }
+    // ...
+
     onDeath?.Invoke();
     gameObject.SetActive(false);
-    
 }
 
 public int GetCurrentHealth()
@@ -175,6 +172,18 @@ public int GetMaxHealth()
 {
     return maxHealth;
 }
+
+public void PlayHitEffect()
+    {
+        if (superHit != null)
+        {
+            if (!superHit.gameObject.activeInHierarchy)
+            {
+                superHit.gameObject.SetActive(true);
+            }
+            superHit.Play();
+        }
+    }
 
 }
 

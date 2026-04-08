@@ -45,14 +45,26 @@ public class DamageFeedback : MonoBehaviour
     {
         Debug.Log("ON DAMAGED SE LLAMÓ");
 
-        // 🎬 Animación
+
+        // Ejecutar partícula superHit SIEMPRE, antes de la animación
+        if (health != null)
+            health.PlayHitEffect();
+
+        // 🎬 Animación protegida
         if (animator != null)
         {
-            if (!string.IsNullOrEmpty(hitTrigger))
-                animator.SetTrigger(hitTrigger);
+            try
+            {
+                if (!string.IsNullOrEmpty(hitTrigger))
+                    animator.SetTrigger(hitTrigger);
 
-            if (!string.IsNullOrEmpty(hitStateName))
-                animator.CrossFade(hitStateName, 0.05f, 0, 0f);
+                if (!string.IsNullOrEmpty(hitStateName))
+                    animator.CrossFade(hitStateName, 0.05f, 0, 0f);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[DamageFeedback] Error al reproducir animación de daño: {ex.Message}");
+            }
         }
 
         // ✨ Flash

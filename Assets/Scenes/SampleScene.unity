@@ -101397,7 +101397,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7800029865677383723, guid: b0f369195ca6c3344af26520f30d47c8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.19
+      value: 0.245
       objectReference: {fileID: 0}
     - target: {fileID: 7800029865677383723, guid: b0f369195ca6c3344af26520f30d47c8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -109718,6 +109718,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 5557191284576181548, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
+      propertyPath: fuerzaSalto
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5557191284576181548, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
       propertyPath: particulaCorrer
       value: 
       objectReference: {fileID: 961588929}
@@ -109725,6 +109729,10 @@ PrefabInstance:
       propertyPath: particulaSaltar
       value: 
       objectReference: {fileID: 1583136708}
+    - target: {fileID: 5557191284576181548, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
+      propertyPath: fuerzaSaltoExtra
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5557191284576181548, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
       propertyPath: particulaCorriendo
       value: 
@@ -109739,11 +109747,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7157473902714605996, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 395.182
+      value: -11.26
       objectReference: {fileID: 0}
     - target: {fileID: 7157473902714605996, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.464
+      value: -0.42
       objectReference: {fileID: 0}
     - target: {fileID: 7157473902714605996, guid: e8a4095dd3670ed4cb187095fce68159, type: 3}
       propertyPath: m_LocalPosition.z

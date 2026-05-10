@@ -54,7 +54,7 @@ public class EnemyAI : MonoBehaviour
     private bool isGrounded;
     private float jumpCooldown = 0f;
     private GameObject healthBar;
-    private Transform healthFill;
+    private SimpleHealthBar simpleHealthBar; // <-- Referencia al componente SimpleHealthBar
     private bool isDead = false;
 
     void Start()
@@ -67,7 +67,6 @@ public class EnemyAI : MonoBehaviour
         currentState = State.Patrolling;
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         
-        // Verificar que los componentes necesarios estén configurados
         if (leftBoundary == null || rightBoundary == null)
         {
             Debug.LogError("Los límites de patrulla no están configurados en " + gameObject.name);
@@ -81,10 +80,23 @@ public class EnemyAI : MonoBehaviour
         // Crear barra de vida
         if (healthBarPrefab != null)
         {
+            // FIX: Instanciar la barra en la escena SIN hacerla hija del enemigo directamente,
+            // para evitar que el Flip() del enemigo deforme la barra.
             healthBar = Instantiate(healthBarPrefab, transform.position + healthBarOffset, Quaternion.identity);
-            healthBar.transform.SetParent(transform);
-            healthFill = healthBar.transform.Find("Fill");
+            
+            // Obtener el componente SimpleHealthBar del prefab instanciado
+            simpleHealthBar = healthBar.GetComponent<SimpleHealthBar>();
+            
+            if (simpleHealthBar == null)
+            {
+                Debug.LogWarning("El prefab de la barra de vida no tiene el componente SimpleHealthBar en " + gameObject.name);
+            }
+            
             UpdateHealthBar();
+        }
+        else
+        {
+            Debug.LogWarning("healthBarPrefab no está asignado en el Inspector para " + gameObject.name);
         }
     }
 
@@ -92,22 +104,17 @@ public class EnemyAI : MonoBehaviour
     {
         if (isDead) return;
 
-        // Verificar si está en el suelo
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
         
-        // Reducir los contadores de cooldown
         if (jumpCooldown > 0)
         {
             jumpCooldown -= Time.deltaTime;
         }
         
-        // Verificar si el jugador está en rango de detección
         float distanceToPlayer = player != null ? Vector2.Distance(transform.position, player.position) : float.MaxValue;
         
-        // Actualizar el estado del enemigo según las condiciones
         UpdateState(distanceToPlayer);
         
-        // Ejecutar comportamiento según el estado actual
         switch (currentState)
         {
             case State.Patrolling:
@@ -127,47 +134,46 @@ public class EnemyAI : MonoBehaviour
                 break;
         }
         
-        // Actualizar animaciones
         UpdateAnimations();
 
-        // Actualizar posición de la barra de vida
+        // FIX: Actualizar posición de la barra manualmente cada frame (ya que no es hija del enemigo)
+        // y forzar que nunca se voltee con el enemigo.
         if (healthBar != null)
         {
             healthBar.transform.position = transform.position + healthBarOffset;
+            // Asegurar que la escala X de la barra siempre sea positiva
+            Vector3 barScale = healthBar.transform.localScale;
+            barScale.x = Mathf.Abs(barScale.x);
+            healthBar.transform.localScale = barScale;
         }
     }
     
     void UpdateState(float distanceToPlayer)
     {
-        // Si tiene poca vida, huir es prioridad
         if (currentHealth <= maxHealth * (lowHealthThreshold / 100) && distanceToPlayer <= fleeDistance)
         {
             currentState = State.Fleeing;
             return;
         }
         
-        // Si está fuera de su zona de patrulla y no está persiguiendo al jugador
         if (IsOutsidePatrolArea() && currentState != State.Chasing && currentState != State.Attacking && currentState != State.Fleeing)
         {
             currentState = State.Returning;
             return;
         }
         
-        // Si detecta al jugador, perseguirlo
         if (distanceToPlayer <= detectionRange && distanceToPlayer > attackRange)
         {
             currentState = State.Chasing;
             return;
         }
         
-        // Si el jugador está en rango de ataque
         if (distanceToPlayer <= attackRange)
         {
             currentState = State.Attacking;
             return;
         }
         
-        // Si no se cumple ninguna condición especial y está dentro de su zona, patrullar
         if (currentState != State.Patrolling && !IsOutsidePatrolArea() && currentState != State.Fleeing)
         {
             currentState = State.Patrolling;
@@ -179,7 +185,6 @@ public class EnemyAI : MonoBehaviour
         if (isWaiting)
             return;
             
-        // Determinar dirección de movimiento
         if (isFacingRight && transform.position.x >= rightBoundary.position.x)
         {
             Flip();
@@ -191,10 +196,7 @@ public class EnemyAI : MonoBehaviour
             StartCoroutine(WaitAtBoundary());
         }
         
-        // Moverse en la dirección actual
         rb.velocity = new Vector2(isFacingRight ? moveSpeed : -moveSpeed, rb.velocity.y);
-        
-        // Saltar ocasionalmente para superar obstáculos pequeños
         TryJump();
     }
     
@@ -202,18 +204,15 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
         
-        // Determinar si debe voltearse para mirar al jugador
         if ((player.position.x > transform.position.x && !isFacingRight) ||
             (player.position.x < transform.position.x && isFacingRight))
         {
             Flip();
         }
         
-        // Mover hacia el jugador
         float direction = player.position.x > transform.position.x ? 1 : -1;
         rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
         
-        // Saltar si hay un obstáculo o si el jugador está más alto
         if (isGrounded && player.position.y > transform.position.y + 0.5f)
         {
             Jump();
@@ -228,17 +227,14 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
         
-        // Frenar movimiento durante el ataque
         rb.velocity = new Vector2(0, rb.velocity.y);
         
-        // Asegurarse de estar mirando al jugador
         if ((player.position.x > transform.position.x && !isFacingRight) ||
             (player.position.x < transform.position.x && isFacingRight))
         {
             Flip();
         }
         
-        // Realizar ataque si no está en cooldown
         if (canAttack && !isAttacking)
         {
             StartCoroutine(PerformAttack());
@@ -249,33 +245,20 @@ public class EnemyAI : MonoBehaviour
     {
         if (player == null) return;
         
-        // Determinar dirección de huida (opuesta al jugador)
-        float fleeDirection = transform.position.x < player.position.x ? -1 : 1;
+        float direction = transform.position.x > player.position.x ? 1 : -1;
         
-        // Voltear según la dirección de huida
-        if ((fleeDirection > 0 && !isFacingRight) || (fleeDirection < 0 && isFacingRight))
+        if ((direction > 0 && !isFacingRight) || (direction < 0 && isFacingRight))
         {
             Flip();
         }
         
-        // Moverse más rápido para huir
-        rb.velocity = new Vector2(fleeDirection * fleeSpeed, rb.velocity.y);
-        
-        // Saltar para escapar más rápido o evitar obstáculos
+        rb.velocity = new Vector2(direction * fleeSpeed, rb.velocity.y);
         TryJump();
-        
-        // Si ya está lo suficientemente lejos, volver a patrullar
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-        if (distanceToPlayer > fleeDistance * 1.5f)
-        {
-            currentState = State.Returning;
-        }
     }
     
     void ReturnToPatrolArea()
     {
-        // Determinar hacia qué punto del área de patrulla dirigirse
-        Vector2 targetPosition;
+        Vector3 targetPosition;
         
         if (transform.position.x < leftBoundary.position.x)
         {
@@ -287,27 +270,20 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            // Ya está dentro del área de patrulla
             currentState = State.Patrolling;
             return;
         }
         
-        // Determinar dirección hacia el objetivo
         float direction = targetPosition.x > transform.position.x ? 1 : -1;
         
-        // Voltear si es necesario
         if ((direction > 0 && !isFacingRight) || (direction < 0 && isFacingRight))
         {
             Flip();
         }
         
-        // Moverse hacia el objetivo
         rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
-        
-        // Saltar para superar obstáculos
         TryJump();
         
-        // Verificar si ya regresó al área de patrulla
         if (!IsOutsidePatrolArea())
         {
             currentState = State.Patrolling;
@@ -318,9 +294,7 @@ public class EnemyAI : MonoBehaviour
     {
         isWaiting = true;
         rb.velocity = new Vector2(0, rb.velocity.y);
-        
         yield return new WaitForSeconds(waitTime);
-        
         isWaiting = false;
     }
     
@@ -329,20 +303,16 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         
-        // Activar animación de ataque
         if (animator != null)
         {
             animator.SetTrigger("Attack");
         }
         
-        // Esperar a que la animación llegue al frame de daño (ajustar según la animación)
         yield return new WaitForSeconds(0.3f);
         
-        // Detectar al jugador en rango de ataque y aplicar daño
         Collider2D playerCollider = Physics2D.OverlapCircle(transform.position, attackRange, playerLayer);
         if (playerCollider != null)
         {
-            // Intentar aplicar daño al jugador
             PlayerHealth playerHealth = playerCollider.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
@@ -350,14 +320,9 @@ public class EnemyAI : MonoBehaviour
             }
         }
         
-        // Esperar a que termine la animación
         yield return new WaitForSeconds(0.5f);
-        
         isAttacking = false;
-        
-        // Aplicar cooldown de ataque
         yield return new WaitForSeconds(attackCooldown);
-        
         canAttack = true;
     }
     
@@ -385,7 +350,6 @@ public class EnemyAI : MonoBehaviour
     
     void TryJump()
     {
-        // Intentar saltar si hay un obstáculo adelante pero no hay nada arriba
         if (isGrounded && jumpCooldown <= 0)
         {
             Vector2 rayStart = transform.position + (isFacingRight ? Vector3.right : Vector3.left) * 0.7f;
@@ -409,17 +373,13 @@ public class EnemyAI : MonoBehaviour
         if (isDead) return;
 
         currentHealth -= damage;
-        
-        // Update health bar
         UpdateHealthBar();
         
-        // Activar animación de daño si existe
         if (animator != null)
         {
             animator.SetTrigger("Hit");
         }
 
-        // Visual feedback
         StartCoroutine(FlashRed());
         
         if (currentHealth <= 0)
@@ -439,18 +399,12 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // FIX: UpdateHealthBar ahora usa el componente SimpleHealthBar correctamente
     private void UpdateHealthBar()
     {
-        if (healthFill != null)
+        if (simpleHealthBar != null)
         {
-            float healthPercent = (float)currentHealth / maxHealth;
-            healthFill.localScale = new Vector3(healthPercent, 1, 1);
-            
-            SpriteRenderer fillRenderer = healthFill.GetComponent<SpriteRenderer>();
-            if (fillRenderer != null)
-            {
-                fillRenderer.color = Color.Lerp(lowHealthColor, fullHealthColor, healthPercent);
-            }
+            simpleHealthBar.UpdateHealthBar(currentHealth, maxHealth);
         }
     }
     
@@ -458,25 +412,21 @@ public class EnemyAI : MonoBehaviour
     {
         isDead = true;
         
-        // Activar animación de muerte si existe
         if (animator != null)
         {
             animator.SetTrigger("Die");
         }
         
-        // Desactivar colisiones y movimiento
         GetComponent<Collider2D>().enabled = false;
         rb.velocity = Vector2.zero;
         rb.gravityScale = 0;
         this.enabled = false;
         
-        // Hide health bar
         if (healthBar != null)
         {
             healthBar.SetActive(false);
         }
         
-        // Destruir el objeto después de la animación
         StartCoroutine(DisableAfterDeath());
     }
 
@@ -490,20 +440,14 @@ public class EnemyAI : MonoBehaviour
     {
         if (animator != null)
         {
-            // Actualizar parámetros del animator
             animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
             animator.SetBool("IsGrounded", isGrounded);
-            
-            // Estados adicionales
             animator.SetBool("IsChasing", currentState == State.Chasing);
             animator.SetBool("IsFleeing", currentState == State.Fleeing);
-            
-            // Parámetro de vida baja
             animator.SetBool("LowHealth", currentHealth <= maxHealth * (lowHealthThreshold / 100));
         }
     }
     
-    // Para visualizar el rango de detección y ataque en el editor
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -518,7 +462,6 @@ public class EnemyAI : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
         
-        // Dibujar área de patrulla
         if (leftBoundary != null && rightBoundary != null)
         {
             Gizmos.color = Color.blue;
@@ -534,6 +477,15 @@ public class EnemyAI : MonoBehaviour
                 new Vector3(leftBoundary.position.x, leftBoundary.position.y, 0),
                 new Vector3(rightBoundary.position.x, rightBoundary.position.y, 0)
             );
+        }
+    }
+
+    // Limpiar la barra de vida si el enemigo es destruido
+    void OnDestroy()
+    {
+        if (healthBar != null)
+        {
+            Destroy(healthBar);
         }
     }
 }

@@ -39,7 +39,7 @@ public class EnemyController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
     private GameObject healthBar;
-    private Transform healthFill;
+    private SimpleHealthBar simpleHealthBar; // FIX: referencia al componente SimpleHealthBar
 
     // State variables
     private int currentHealth;
@@ -77,12 +77,24 @@ public class EnemyController : MonoBehaviour
             Debug.LogError("Player not found. Make sure the player has the 'Player' tag.");
         }
 
+        // FIX: Instanciar la barra SIN hacerla hija del enemigo para evitar que Flip() la deforme
         if (healthBarPrefab != null)
         {
             healthBar = Instantiate(healthBarPrefab, transform.position + healthBarOffset, Quaternion.identity);
-            healthBar.transform.SetParent(transform);
-            healthFill = healthBar.transform.Find("Fill");
+            
+            // FIX: Obtener el componente SimpleHealthBar en lugar de buscar el Fill manualmente
+            simpleHealthBar = healthBar.GetComponent<SimpleHealthBar>();
+            
+            if (simpleHealthBar == null)
+            {
+                Debug.LogWarning("El prefab de la barra de vida no tiene el componente SimpleHealthBar en " + gameObject.name);
+            }
+            
             UpdateHealthBar();
+        }
+        else
+        {
+            Debug.LogWarning("healthBarPrefab no está asignado en el Inspector para " + gameObject.name);
         }
 
         if (groundCheck == null)
@@ -116,12 +128,15 @@ public class EnemyController : MonoBehaviour
         
         UpdateAnimations(distanceToPlayer);
         
+        // FIX: Posicionar la barra manualmente y forzar scale positivo para que no se voltee con Flip()
         if (healthBar != null)
         {
             healthBar.transform.position = transform.position + healthBarOffset;
+            Vector3 barScale = healthBar.transform.localScale;
+            barScale.x = Mathf.Abs(barScale.x);
+            healthBar.transform.localScale = barScale;
         }
 
-        // Try jumping if there's an obstacle
         TryJump();
     }
 
@@ -170,22 +185,18 @@ public class EnemyController : MonoBehaviour
 
     private void UpdateAnimations(float distanceToPlayer)
     {
-        // Update animator parameters instead of directly playing animations
         animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
         animator.SetBool("IsGrounded", isGrounded);
         animator.SetBool("IsAttacking", isAttacking);
         animator.SetBool("IsDead", isDead);
         animator.SetBool("LowHealth", hasLowHealth);
         
-        // Determine if the enemy is fleeing or retreating
         bool isFleeing = hasLowHealth && distanceToPlayer < retreatDistance * lowHealthRetreatMultiplier;
         animator.SetBool("IsFleeing", isFleeing);
         
-        // Determine if the enemy is in retreat mode
         bool isRetreating = distanceToPlayer < retreatDistance && distanceToPlayer > minDistance;
         animator.SetBool("IsRetreating", isRetreating);
         
-        // Set jumping state
         if (!isGrounded && rb.velocity.y > 0.1f)
         {
             animator.SetBool("IsJumping", true);
@@ -195,7 +206,6 @@ public class EnemyController : MonoBehaviour
             animator.SetBool("IsJumping", false);
         }
         
-        // Determine if we're chasing the player
         bool isChasing = distanceToPlayer <= attackRange * 1.5f && distanceToPlayer > attackRange;
         animator.SetBool("IsChasing", isChasing);
     }
@@ -231,8 +241,6 @@ public class EnemyController : MonoBehaviour
         lastAttackTime = Time.time;
         
         rb.velocity = Vector2.zero;
-        
-        // Use trigger instead of direct animation play
         animator.SetTrigger("Attack");
         
         yield return new WaitForSeconds(attackAnimationTime);
@@ -262,7 +270,7 @@ public class EnemyController : MonoBehaviour
         if (isDead) return;
         
         currentHealth -= damage;
-        UpdateHealthBar();
+        UpdateHealthBar(); // Actualiza la barra al recibir daño
         
         if (currentHealth <= 0)
         {
@@ -277,7 +285,6 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator PlayHurtAnimation()
     {
-        // Use trigger instead of direct animation play
         animator.SetTrigger("Hit");
         isAttacking = true;
         rb.velocity = Vector2.zero;
@@ -296,18 +303,12 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    // FIX: Ahora usa SimpleHealthBar en lugar de manipular el Fill directamente
     private void UpdateHealthBar()
     {
-        if (healthFill != null)
+        if (simpleHealthBar != null)
         {
-            float healthPercent = (float)currentHealth / maxHealth;
-            healthFill.localScale = new Vector3(healthPercent, 1, 1);
-            
-            SpriteRenderer fillRenderer = healthFill.GetComponent<SpriteRenderer>();
-            if (fillRenderer != null)
-            {
-                fillRenderer.color = Color.Lerp(lowHealthColor, fullHealthColor, healthPercent);
-            }
+            simpleHealthBar.UpdateHealthBar(currentHealth, maxHealth);
         }
     }
 
@@ -315,9 +316,7 @@ public class EnemyController : MonoBehaviour
     {
         isDead = true;
         
-        // Use trigger instead of direct animation play
         animator.SetTrigger("Die");
-        
         rb.velocity = Vector2.zero;
         GetComponent<Collider2D>().enabled = false;
         
@@ -341,6 +340,15 @@ public class EnemyController : MonoBehaviour
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
+    }
+
+    // FIX: Limpiar la barra si el enemigo es destruido
+    private void OnDestroy()
+    {
+        if (healthBar != null)
+        {
+            Destroy(healthBar);
+        }
     }
 
     private void OnDrawGizmosSelected()

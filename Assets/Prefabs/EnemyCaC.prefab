@@ -140,8 +140,8 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  maxHealth: 5
-  currentHealth: 5
+  maxHealth: 10
+  currentHealth: 10
   lowHealthThreshold: 30
   fleeSpeed: 4
   fleeDistance: 7

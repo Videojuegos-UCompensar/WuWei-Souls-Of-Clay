@@ -132,29 +132,25 @@ MonoBehaviour:
   groundCheck: {fileID: 3449999566122505457}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 895
-  groundCheckRadius: 0.05
+    m_Bits: 264
+  groundCheckRadius: 0.5
+  frontCheckDistance: 0.5
   leftBoundary: {fileID: 0}
   rightBoundary: {fileID: 0}
   waitTime: 2
-  frontCheckDistance: 0.5
-  playerDetection: {fileID: 0}
-  detectionRange: 5
-  attackRange: 0.5
-  attackDamage: 1
-  attackCooldown: 1.5
+  detectionRange: 2
+  playerViewRange: 12
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
+  npcLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  npcDetectionRange: 4
+  attackRange: 0.5
+  attackDamage: 1
+  attackCooldown: 1.5
   maxHealth: 5
-  currentHealth: 5
-  lowHealthThreshold: 30
-  fleeSpeed: 4
-  fleeDistance: 7
-  healthBarPrefab: {fileID: 3803695071122325125, guid: e9a331ea3eba6ba4dadd1bd082520f0b, type: 3}
-  healthBarOffset: {x: 0, y: 1, z: 0}
-  lowHealthColor: {r: 1, g: 0, b: 0, a: 1}
-  fullHealthColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!212 &3011752992036956202
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -375,7 +371,7 @@ Transform:
   m_GameObject: {fileID: 9029770048721687548}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.028, y: -0.375, z: -0.05147448}
+  m_LocalPosition: {x: 0.028, y: -0.541, z: -0.05147448}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

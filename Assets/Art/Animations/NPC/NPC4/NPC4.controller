@@ -74,7 +74,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: a5cf317ef8a355c438f49b1cc1d81a40, type: 2}
+  m_Motion: {fileID: 7400000, guid: bda39d273db42f04485fb547d19e4261, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -86,7 +86,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NPC2
+  m_Name: NPC4
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Asustado
@@ -129,7 +129,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 63cda5da4b1b1344593d600bb3823024, type: 2}
+  m_Motion: {fileID: 7400000, guid: ce8964b8601299f4c9740e18807b03ea, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -156,7 +156,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: a5cf317ef8a355c438f49b1cc1d81a40, type: 2}
+  m_Motion: {fileID: 7400000, guid: bda39d273db42f04485fb547d19e4261, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

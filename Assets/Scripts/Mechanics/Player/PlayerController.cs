@@ -16,7 +16,7 @@ public class Movimiento2D : MonoBehaviour
     public float saltoSostenido = 0.5f; // tiempo maximo que se puede sostener el salto
     public float fuerzaSaltoExtra = 5f; // fuerza adicional mientras mantienes presionado
     private bool manteniendoSalto;
-    private float tiempoSalto = 0f;
+    private float tiempoSalto = 1f;
     public LayerMask queEsSuelo;
     public Transform controladorSuelo;
     public Vector3 dimecionesCaja;
@@ -25,7 +25,8 @@ public class Movimiento2D : MonoBehaviour
     [SerializeField] private Vector2 velocidadRebote;
 
     // Variables para el dash
-    public float velocidadDash = 30f;
+    public float velocidadDashHorizontal = 30f;
+    public float velocidadDashVertical = 22f;
     public float tiempoDash = 0.2f;
     public float tiempoEntreDashes = 1f;
     private bool puedeDashear = true;
@@ -55,16 +56,12 @@ public class Movimiento2D : MonoBehaviour
         Controles.Enable();
         Controles.Base.Jump.started += _ => IniciarSalto();
         Controles.Base.Jump.canceled += _ => FinalizarSalto();
-        Controles.Base.Jump.started += _ => IniciarSalto();
-        Controles.Base.Jump.canceled += _ => FinalizarSalto();
         Controles.Base.Dash.performed += _ => RealizarDash();
     }
 
     private void OnDisable()
     {
         Controles.Disable();
-        Controles.Base.Jump.started -= _ => IniciarSalto();
-        Controles.Base.Jump.canceled -= _ => FinalizarSalto();
         Controles.Base.Jump.started -= _ => IniciarSalto();
         Controles.Base.Jump.canceled -= _ => FinalizarSalto();
         Controles.Base.Dash.performed -= _ => RealizarDash();
@@ -80,7 +77,7 @@ public class Movimiento2D : MonoBehaviour
         bool saltoPresionado = Controles.Base.Jump.ReadValue<float>() > 0f;
 
         // Si se mantiene presionado y está en la ventana del salto sostenido
-        if (manteniendoSalto && saltoPresionado && tiempoSalto < saltoSostenido)
+        if (manteniendoSalto && saltoPresionado && tiempoSalto < saltoSostenido && rbd.velocity.y > 0)
         {
             tiempoSalto += Time.deltaTime;
 
@@ -88,9 +85,9 @@ public class Movimiento2D : MonoBehaviour
             float factor = 1f - (tiempoSalto / saltoSostenido);
             rbd.AddForce(Vector2.up * fuerzaSaltoExtra * factor, ForceMode2D.Force);
 
-            if (rbd.velocity.y > 10f)
+            if (rbd.velocity.y > 8f)
             {
-                rbd.velocity = new Vector2(rbd.velocity.x, 10f);
+                rbd.velocity = new Vector2(rbd.velocity.x, 8f);
             }
 
         }
@@ -223,27 +220,50 @@ public class Movimiento2D : MonoBehaviour
         float gravityOriginal = rbd.gravityScale;
         rbd.gravityScale = 0;
 
-        // Determinar la direccion del dash
         float direccionX = direccion.x;
-        if (direccionX == 0)
+        float direccionY = direccion.y;
+
+        // Si no hay input horizontal ni vertical, dash hacia donde mira
+        if (direccionX == 0 && direccionY == 0)
             direccionX = mirandoDrecha ? 1 : -1;
 
-        // Activar la animacion de dash
-        animator.SetBool("Dash", true);
+        // Determinar animación y velocidad
+        Vector2 dashDir;
 
-        // Aplicar el dash inmediatamente
-        rbd.velocity = new Vector2(direccionX * velocidadDash, 0);
+        if (Mathf.Abs(direccionY) > Mathf.Abs(direccionX))
+        {
+            // DASH VERTICAL
+            dashDir = new Vector2(0, Mathf.Sign(direccionY));
 
-        // Mantener el dash por el tiempo especificado
+            if (direccionY > 0)
+                animator.SetTrigger("DashUp");
+            else
+                animator.SetTrigger("DashDown");
+        }
+        else
+        {
+            // DASH HORIZONTAL
+            dashDir = new Vector2(Mathf.Sign(direccionX), 0);
+            animator.SetTrigger("Dash");
+        }
+
+        // Aplicar velocidad
+        if (dashDir.x != 0)
+            rbd.velocity = new Vector2(dashDir.x * velocidadDashHorizontal, 0);
+        else
+            rbd.velocity = new Vector2(0, dashDir.y * velocidadDashVertical);
+
         yield return new WaitForSeconds(tiempoDash);
 
-        // Restaurar al estado normal
-        animator.SetBool("Dash", false);
+        // Restaurar estado
         rbd.gravityScale = gravityOriginal;
-        rbd.velocity = new Vector2(0, rbd.velocity.y); // detiene el impulso horizontal extra
+        rbd.velocity = Vector2.zero;
+        animator.SetBool("Dash", false);
+        animator.SetBool("DashUp", false);
+        animator.SetBool("DashDown", false);
+
         estaDasheando = false;
 
-        // Cooldown entre dashes
         yield return new WaitForSeconds(tiempoEntreDashes);
         puedeDashear = true;
     }

@@ -29,6 +29,7 @@ public class NPCFear : MonoBehaviour
 
     // Estado
     private bool huyendo = false;
+    private bool muerto = false;
 
     void Start()
     {
@@ -43,6 +44,9 @@ public class NPCFear : MonoBehaviour
 
     void Update()
     {
+        // Si está muerto, no hacer nada
+        if (muerto) return;
+
         DetectarEnemigo();
 
         if (huyendo)
@@ -146,6 +150,34 @@ public class NPCFear : MonoBehaviour
         // IMPORTANTE:
         // NO mover el groundCheck manualmente.
         // Debe ser hijo del NPC para girar automáticamente.
+    }
+
+    public void Die()
+    {
+        
+        // Marcar como muerto para evitar que Update() interfiera
+        muerto = true;
+        huyendo = false;
+
+        // Resetear parámetros del animator que puedan interferir
+        animator.SetBool("Asustado", false);
+
+        // Detener completamente el movimiento y desactivar físicas
+        rb.velocity = Vector2.zero;
+        rb.simulated = false; // Desactiva completamente las físicas del Rigidbody2D
+
+        // Desactivar collider para que no obstruya
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            col.enabled = false;
+        }
+
+        // Activar la animación de muerte
+        animator.SetTrigger("die");
+
+        // Desactivar el script
+        this.enabled = false;
     }
 
     void OnDrawGizmosSelected()

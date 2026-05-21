@@ -14,7 +14,7 @@ public class HealthComponent : MonoBehaviour
 
     [SerializeField] private ParticleSystem superHit;
 
-    private int currentHealth;
+    public int currentHealth { get; private set; }
 
     [Header("Eventos")]
     public Action onDeath;
